@@ -8,6 +8,7 @@ defineProps<{
 const [emblaRef] = emblaCarouselVue({
   loop: true,
 });
+void emblaRef;
 </script>
 
 <template>

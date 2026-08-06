@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { useScrollTo } from "@/composables/useScrollTo";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import BaseBadge from "@/components/ui/BaseBadge.vue";
