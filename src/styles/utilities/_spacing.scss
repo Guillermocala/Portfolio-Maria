@@ -1,0 +1,18 @@
+@use '../abstracts/variables' as *;
+
+@each $key, $value in (
+  1: $space-1,
+  2: $space-2,
+  3: $space-3,
+  4: $space-4,
+  6: $space-6,
+  8: $space-8,
+  12: $space-12,
+  16: $space-16,
+  24: $space-24,
+  32: $space-32
+) {
+  .mt-#{$key} { margin-top: $value; }
+  .mb-#{$key} { margin-bottom: $value; }
+  .gap-#{$key} { gap: $value; }
+}

@@ -1,0 +1,42 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/breakpoints' as *;
+
+.footer {
+  padding-block: $space-12;
+  border-top: 1px solid $color-border;
+  background-color: $color-surface;
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    gap: $space-6;
+    align-items: center;
+    text-align: center;
+
+    @include breakpoint(md) {
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
+    }
+  }
+
+  &__text {
+    font-size: $text-small;
+    color: $color-text-secondary;
+  }
+
+  &__links {
+    display: flex;
+    gap: $space-6;
+  }
+
+  &__link {
+    font-size: $text-small;
+    color: $color-text-secondary;
+    transition: color $transition-base;
+
+    &:hover {
+      color: $color-text-primary;
+    }
+  }
+}

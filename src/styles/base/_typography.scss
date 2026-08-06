@@ -1,0 +1,68 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/breakpoints' as *;
+@use '../abstracts/mixins' as *;
+
+body {
+  /* font-family: $font-body; */
+  font-size: $text-body-mobile;
+  line-height: 1.6;
+  color: $color-text-primary;
+  background-color: $color-bg;
+  -webkit-font-smoothing: antialiased;
+
+  @include breakpoint(lg) {
+    font-size: $text-body-desktop;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $font-heading;
+  font-weight: 600;
+  line-height: 1.2;
+  color: $color-text-primary;
+}
+
+h1 {
+  font-size: $text-h1-mobile;
+
+  @include breakpoint(lg) {
+    font-size: $text-h1-desktop;
+  }
+}
+
+h2 {
+  font-size: $text-h2-mobile;
+
+  @include breakpoint(lg) {
+    font-size: $text-h2-desktop;
+  }
+}
+
+h3 {
+  font-size: $text-h3-mobile;
+
+  @include breakpoint(lg) {
+    font-size: $text-h3-desktop;
+  }
+}
+
+h4 {
+  font-size: $text-h4-desktop;
+}
+
+p {
+  color: $color-text-secondary;
+}
+
+.text-small {
+  font-size: $text-small;
+}
+
+.text-accent {
+  color: $color-accent;
+}

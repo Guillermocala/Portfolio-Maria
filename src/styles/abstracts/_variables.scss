@@ -1,0 +1,54 @@
+// Colors
+$color-bg: #fafafa;
+$color-surface: #ffffff;
+$color-text-primary: #1a1a1a;
+$color-text-secondary: #6b7280;
+$color-border: #e5e7eb;
+$color-accent: #c4a882;
+
+// Spacing scale
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-6: 24px;
+$space-8: 32px;
+$space-12: 48px;
+$space-16: 64px;
+$space-24: 96px;
+$space-32: 128px;
+
+// Container
+$container-max-width: 1280px;
+$container-width: 90%;
+
+// Radius
+$radius-card: 16px;
+$radius-button: 12px;
+$radius-input: 12px;
+$radius-image: 20px;
+
+// Shadows
+$shadow-small: 0 2px 8px rgba(26, 26, 26, 0.06);
+$shadow-large: 0 12px 32px rgba(26, 26, 26, 0.1);
+
+// Transitions
+$transition-base: 250ms ease;
+$hover-lift: -4px;
+
+// Typography
+$font-heading: 'Outfit', sans-serif;
+$font-body: 'Inter', sans-serif;
+
+// Font sizes - mobile first
+$text-h1-mobile: 42px;
+$text-h2-mobile: 34px;
+$text-h3-mobile: 28px;
+$text-body-mobile: 16px;
+$text-small: 14px;
+
+$text-h1-desktop: 64px;
+$text-h2-desktop: 48px;
+$text-h3-desktop: 32px;
+$text-h4-desktop: 24px;
+$text-body-desktop: 18px;

@@ -1,0 +1,26 @@
+@use '../abstracts/variables' as *;
+
+@use '../abstracts/variables' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-4;
+  border-radius: $radius-button;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  font-size: $text-small;
+  color: $color-text-secondary;
+
+  &__value {
+    font-weight: 600;
+    color: $color-text-primary;
+  }
+}
+
+.badge-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+}
