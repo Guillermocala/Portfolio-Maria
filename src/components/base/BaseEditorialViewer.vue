@@ -2,7 +2,7 @@
 import { computed, ref, watch } from "vue";
 import VuePdfEmbed from "vue-pdf-embed";
 
-import type { EditorialDocument } from "@/types/editorial";
+import type { EditorialDocument } from "src/data/types.ts";
 
 const props = defineProps<{
   documents: EditorialDocument[];

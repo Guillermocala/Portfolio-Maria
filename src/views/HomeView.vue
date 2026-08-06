@@ -12,21 +12,23 @@ import heroPhoto from "@/assets/hero.jpeg";
 import BaseCarousel from "@/components/ui/BaseCarousel.vue";
 import BaseTimeline from "@/components/base/BaseTimeline.vue";
 import AdvertisingCard from "@/components/base/AdvertisingCard.vue";
-import BaseEditorialViewer from "@/components/base/BaseEditorialViewer.vue";
+/* import BaseEditorialViewer from "@/components/base/BaseEditorialViewer.vue"; */
 import MenuCard from "@/components/base/MenuCard.vue";
 import { navLinks } from "@/data/navigation";
 import { profile, services, featuredProjects } from "@/data/profile";
 import { contactLinks } from "@/data/contact";
 import { experienceEntries } from "@/data/experience";
 import { tools } from "@/data/tools";
-import { onMounted, onUnmounted, watch } from "vue";
+/* import { onMounted, onUnmounted, watch } from "vue"; */
 /* import type { EditorialDocument } from "@/data/types"; */
 
-import bookPdf from "@/assets/portfolio/editorial/El_rincon_del_conocimiento.pdf";
+/* import bookPdf from "@/assets/portfolio/editorial/El_rincon_del_conocimiento.pdf";
 import thissaPdf from "@/assets/portfolio/editorial/Presentacion_Thissa_Store.pdf";
-import catalogPdf from "@/assets/portfolio/editorial/Catalogo_don_josue.pdf";
+import catalogPdf from "@/assets/portfolio/editorial/Catalogo_don_josue.pdf"; */
 
 const { scrollToSection } = useScrollTo();
+
+type CarouselDirection = "left" | "right" | "up" | "down";
 
 type PortfolioPanel = {
   id: string;
@@ -45,7 +47,7 @@ type QrImage = {
   href: string;
 };
 
-type EditorialDocument = {
+/* type EditorialDocument = {
   id: string;
   title: string;
   subtitle: string;
@@ -53,7 +55,7 @@ type EditorialDocument = {
   cover: string;
   pdf: string;
   viewer: 'flipbook' | 'pdf';
-}
+} */
 
 const portfolioMedia = import.meta.glob("../assets/portfolio/**/*", {
   eager: true,
@@ -192,7 +194,7 @@ const portfolioQrs: QrImage[] = [
   },
 ];
 
-const editorialDocuments: EditorialDocument[] = [
+/* const editorialDocuments: EditorialDocument[] = [
   {
     id: "book",
     title: "El Rincón del Conocimiento",
@@ -225,7 +227,7 @@ const editorialDocuments: EditorialDocument[] = [
     pdf: catalogPdf,
     viewer: "flipbook",
   },
-];
+]; */
 
 const currentYear = computed(() => new Date().getFullYear());
 const brandingImages = getImagesForFolder("branding");

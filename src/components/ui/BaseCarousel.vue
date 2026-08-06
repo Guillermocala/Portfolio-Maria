@@ -23,7 +23,7 @@ const [emblaRef, emblaApi] = emblaCarouselVue({
 
 void emblaRef;
 
-const timer = ref<null>(null);
+const timer = ref<ReturnType<typeof setInterval> | null>(null);
 
 const scroll = () => {
   const api = emblaApi.value;
