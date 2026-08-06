@@ -1,4 +1,7 @@
 import type { ContactLink, FeaturedProject, Profile, Service, TimelineEntry, Tool } from './types'
+import smartcultivoLogo from "@/assets/featuredprojects/smartcultivo.svg";
+import thissaLogo from "@/assets/featuredprojects/thissa.svg";
+import osirisLogo from "@/assets/featuredprojects/osiris.svg";
 
 export const profile: Profile = {
   name: 'María Alejandra Santiago',
@@ -53,21 +56,21 @@ export const featuredProjects: FeaturedProject[] = [
   {
     id: 'smartcultivo',
     name: 'SmartCultivo',
-    image: '/src/assets/featuredprojects/smartcultivo.svg',
+    image: smartcultivoLogo,
     summary:
       'Desarrollo de contenido para redes sociales, branding corporativo y piezas publicitarias para el sector agrícola.',
   },
   {
     id: 'thissa',
     name: 'Thissa Store',
-    image: '/src/assets/featuredprojects/thissa.svg',
+    image: thissaLogo,
     summary:
       'Diseño gráfico y marketing digital enfocado en contenido comercial, menús digitales, publicidad y comunicación visual.',
   },
   {
     id: 'osiris',
     name: 'Bar Osiris',
-    image: '/src/assets/featuredprojects/osiris.svg',
+    image: osirisLogo,
     summary:
       'Diseño de contenido para redes sociales y material promocional para fortalecer la identidad visual del establecimiento.',
   },

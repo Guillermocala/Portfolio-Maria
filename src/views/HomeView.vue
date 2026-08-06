@@ -27,6 +27,16 @@ import { tools } from "@/data/tools";
 import thissaPdf from "@/assets/portfolio/editorial/Presentacion_Thissa_Store.pdf";
 import catalogPdf from "@/assets/portfolio/editorial/Catalogo_don_josue.pdf"; */
 
+import qr1 from "@/assets/portfolio/qrs/qr1.svg";
+import qr2 from "@/assets/portfolio/qrs/qr2.svg";
+import qr3 from "@/assets/portfolio/qrs/qr3.svg";
+import qr4 from "@/assets/portfolio/qrs/qr4.svg";
+import qr5 from "@/assets/portfolio/qrs/qr5.svg";
+import qr6 from "@/assets/portfolio/qrs/qr6.svg";
+import qr7 from "@/assets/portfolio/qrs/qr7.svg";
+import qr8 from "@/assets/portfolio/qrs/qr8.svg";
+import qr9 from "@/assets/portfolio/qrs/qr9.png";
+
 const { scrollToSection } = useScrollTo();
 
 type CarouselDirection = "left" | "right" | "up" | "down";
@@ -130,63 +140,63 @@ const portfolioQrs: QrImage[] = [
     id: "qr1",
     title: "",
     description: "",
-    image: "/src/assets/portfolio/qrs/qr1.svg",
+    image: qr1,
     href: "https://smartcultivo.com/",
   },
   {
     id: "qr2",
     title: "",
     description: "",
-    image: "/src/assets/portfolio/qrs/qr2.svg",
+    image: qr2,
     href: "https://thissa.store/quesichichacol",
   },
   {
     id: "qr3",
     title: "",
     description: "",
-    image: "/src/assets/portfolio/qrs/qr3.svg",
+    image: qr3,
     href: "https://thissa.store/bubaluu_bq",
   },
   {
     id: "qr4",
     title: "",
     description: "",
-    image: "/src/assets/portfolio/qrs/qr4.svg",
+    image: qr4,
     href: "https://thissa.store/ladeliciagourmet",
   },
   {
     id: "qr5",
     title: "",
     description: "",
-    image: "/src/assets/portfolio/qrs/qr5.svg",
+    image: qr5,
     href: "https://thissa.store/charlabarra",
   },
   {
     id: "qr6",
     title: "",
     description: "",
-    image: "/src/assets/portfolio/qrs/qr6.svg",
+    image: qr6,
     href: "https://thissa.store/oyebonitarestaurantebar",
   },
   {
     id: "qr7",
     title: "",
     description: "",
-    image: "/src/assets/portfolio/qrs/qr7.svg",
+    image: qr7,
     href: "https://thissa.store/hotelelcisne",
   },
   {
     id: "qr8",
     title: "",
     description: "",
-    image: "/src/assets/portfolio/qrs/qr8.svg",
+    image: qr8,
     href: "https://thissa.store/hotelelcisne",
   },
   {
     id: "qr9",
     title: "",
     description: "",
-    image: "/src/assets/portfolio/qrs/qr9.png",
+    image: qr9,
     href: "https://thissa.store/",
   },
 ];

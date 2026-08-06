@@ -70,8 +70,14 @@ const handleResize = () => {
   emblaApi.value?.reInit();
 };
 
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener("resize", handleResize);
+
+  await nextTick();
+
+  requestAnimationFrame(() => {
+    emblaApi.value?.reInit();
+  });
 });
 
 onUnmounted(() => {
