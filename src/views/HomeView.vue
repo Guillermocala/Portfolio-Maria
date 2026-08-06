@@ -11,6 +11,7 @@ import BaseQrCard from "@/components/ui/BaseQrCard.vue";
 import heroPhoto from "@/assets/hero.jpeg";
 import BaseCarousel from "@/components/ui/BaseCarousel.vue";
 import BaseTimeline from "@/components/base/BaseTimeline.vue";
+import PhotoCard from "@/components/base/PhotoCard.vue";
 import AdvertisingCard from "@/components/base/AdvertisingCard.vue";
 /* import BaseEditorialViewer from "@/components/base/BaseEditorialViewer.vue"; */
 import MenuCard from "@/components/base/MenuCard.vue";
@@ -62,6 +63,8 @@ const portfolioMedia = import.meta.glob("../assets/portfolio/**/*", {
   import: "default",
 }) as Record<string, string>;
 
+console.log(Object.keys(portfolioMedia));
+
 const supportedExtensions = new Set([
   ".png",
   ".jpg",
@@ -74,28 +77,22 @@ const supportedExtensions = new Set([
   ".gif",
 ]);
 
-const folderAliases: Record<string, string[]> = {
-  publicidad: ["advertising"],
-  advertising: ["advertising"],
-  editorial: ["advertising"],
-};
-
 const getImagesForFolder = (folder: string) => {
-  const aliases = folderAliases[folder] ?? [folder];
+  const folderPath = `/portfolio/${folder.toLowerCase()}/`;
 
   return Object.entries(portfolioMedia)
     .filter(([path]) => {
-      const normalizedPath = path.toLowerCase();
-      const extension = normalizedPath.slice(normalizedPath.lastIndexOf("."));
+      const normalized = path.toLowerCase();
+
+      const extension = normalized.slice(normalized.lastIndexOf("."));
 
       return (
-        supportedExtensions.has(extension) &&
-        aliases.some((alias) =>
-          normalizedPath.includes(`/${alias.toLowerCase()}/`),
-        )
+        normalized.includes(folderPath) &&
+        supportedExtensions.has(extension)
       );
     })
-    .map(([, src]) => src);
+    .map(([, src]) => src)
+    .sort();
 };
 
 const portfolioPanels: PortfolioPanel[] = [
@@ -235,6 +232,7 @@ const advertisingImages = getImagesForFolder("advertising");
 const digitalMenuImages = getImagesForFolder("digital-menus");
 const physicalMenuImages = getImagesForFolder("physical-menus");
 const photographyImages = getImagesForFolder("photography");
+console.log(photographyImages);
 </script>
 
 <template>
@@ -516,11 +514,12 @@ const photographyImages = getImagesForFolder("photography");
                 >
                   Fotografía
                 </BaseTitle>
-                <div class="advertising-grid">
-                  <AdvertisingCard
-                    v-for="image in photographyImages"
-                    :key="image"
-                    :image="image"
+
+                <div class="photo-grid">
+                  <PhotoCard
+                    v-for="photographyImage in photographyImages"
+                    :key="photographyImage"
+                    :image="photographyImage"
                   />
                 </div>
               </BaseContainer>
@@ -1049,5 +1048,31 @@ const photographyImages = getImagesForFolder("photography");
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 
   gap: 2rem;
+}
+
+/* seccion de fotos */
+
+.photo-grid {
+  columns: 4 280px;
+
+  column-gap: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+  .photo-grid {
+    columns: 3 240px;
+  }
+}
+
+@media (max-width: 900px) {
+  .photo-grid {
+    columns: 2 220px;
+  }
+}
+
+@media (max-width: 600px) {
+  .photo-grid {
+    columns: 1;
+  }
 }
 </style>

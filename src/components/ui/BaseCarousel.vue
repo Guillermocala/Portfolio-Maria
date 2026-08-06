@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, ref } from "vue";
+import { watch, ref, nextTick, onMounted, onUnmounted } from "vue";
 import emblaCarouselVue from "embla-carousel-vue";
 
 type CarouselDirection = "left" | "right" | "up" | "down";
@@ -16,14 +16,17 @@ const props = withDefaults(
   },
 );
 
-const [emblaRef, emblaApi] = emblaCarouselVue({
+const options = {
   loop: true,
-  axis: props.direction === "up" || props.direction === "down" ? "y" : "x",
-});
+  axis:
+    props.direction === "up" || props.direction === "down"
+      ? "y"
+      : "x",
+} as const;
 
-void emblaRef;
-
+const [emblaRef, emblaApi] = emblaCarouselVue(options);
 const timer = ref<ReturnType<typeof setInterval> | null>(null);
+void emblaRef;
 
 const scroll = () => {
   const api = emblaApi.value;
@@ -42,6 +45,12 @@ const scroll = () => {
   }
 };
 
+const reInit = async () => {
+  await nextTick();
+
+  emblaApi.value?.reInit();
+};
+
 const stopAutoplay = () => {
   if (timer.value !== null) {
     clearInterval(timer.value);
@@ -57,14 +66,42 @@ const startAutoplay = () => {
   timer.value = window.setInterval(scroll, props.autoplayDelay);
 };
 
+const handleResize = () => {
+  emblaApi.value?.reInit();
+};
+
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+  stopAutoplay();
+});
+
 watch(
   emblaApi,
-  (api) => {
+  async (api) => {
     if (!api) return;
+
+    await reInit();
 
     startAutoplay();
   },
-  { immediate: true },
+  {
+    immediate: true,
+  },
+);
+
+watch(
+  () => props.images,
+  async () => {
+    await reInit();
+  },
+  {
+    deep: true,
+    immediate: true,
+  },
 );
 </script>
 
@@ -73,7 +110,12 @@ watch(
     <div class="embla__container">
       <div v-for="image in images" :key="image" class="embla__slide">
         <div class="embla__media">
-          <img :src="image" :alt="image" class="embla__img" />
+          <img
+            :src="image"
+            :alt="image"
+            class="embla__img"
+            @load="handleResize"
+          />
         </div>
       </div>
     </div>

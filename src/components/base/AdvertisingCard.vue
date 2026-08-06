@@ -1,60 +1,48 @@
 <script setup lang="ts">
 defineOptions({
   name: "AdvertisingCard",
-})
+});
 
 defineProps<{
-  image: string
-  title?: string
-}>()
+  image: string;
+  title?: string;
+}>();
 </script>
 
 <template>
   <article class="advertising-card">
-
-    <img
-      :src="image"
-      :alt="title"
-      class="advertising-card__image"
-    />
-
+    <img :src="image" :alt="title" class="advertising-card__image" />
   </article>
 </template>
 
 <style scoped lang="scss">
-.advertising-card{
+.advertising-card {
+  overflow: hidden;
 
-    overflow:hidden;
+  border-radius: 18px;
 
-    border-radius:18px;
+  background: white;
 
-    background:white;
+  box-shadow: var(--shadow-small);
 
-    box-shadow:var(--shadow-small);
+  transition: 0.25s;
 
-    transition:.25s;
-
-    cursor:pointer;
-
+  cursor: pointer;
 }
 
-.advertising-card:hover{
+.advertising-card:hover {
+  transform: translateY(-8px);
 
-    transform:translateY(-8px);
-
-    box-shadow:var(--shadow-medium);
-
+  box-shadow: var(--shadow-medium);
 }
 
-.advertising-card__image{
+.advertising-card__image {
+  display: block;
 
-    display:block;
+  width: 100%;
 
-    width:100%;
+  height: 100%;
 
-    height:100%;
-
-    object-fit:cover;
-
+  object-fit: cover;
 }
 </style>
