@@ -1,17 +1,18 @@
 import type { ContactLink, FeaturedProject, Profile, Service, TimelineEntry, Tool } from './types'
 
 export const profile: Profile = {
-  name: 'María Santiago',
-  specialty: 'Diseñadora Gráfica · Branding · Social Media',
+  name: 'María Alejandra Santiago',
+  specialty: 'Diseñadora Gráfica · Community Manager · Marketing Digital',
   description:
-    'Ayudo a empresas y emprendimientos a comunicar su identidad mediante soluciones visuales creativas, contenido para redes sociales y material gráfico que conecta con las personas.',
+    'Diseño piezas visuales que fortalecen la identidad de marca y mejoran la comunicación entre las empresas y sus clientes. Mi trabajo combina creatividad, estrategia y atención al detalle para desarrollar soluciones gráficas funcionales, atractivas y alineadas con cada proyecto.',
   photo: '/src/assets/hero.jpeg',
   about:
-    'Soy una diseñadora gráfica apasionada por construir identidades visuales sólidas y desarrollar piezas que transmitan el valor de cada marca. Mi trabajo combina creatividad, estrategia y atención al detalle para ofrecer soluciones visuales funcionales y memorables.',
+    'Soy diseñadora gráfica con experiencia en branding, diseño editorial, publicidad y contenido para redes sociales. Me apasiona crear piezas visuales que comuniquen con claridad, transmitan la personalidad de cada marca y generen una conexión auténtica con su audiencia. Cada proyecto representa una oportunidad para combinar creatividad, organización y pensamiento estratégico, cuidando cada detalle desde el concepto hasta la entrega final.',
   stats: [
     { label: 'Años de experiencia', value: '5+' },
     { label: 'Marcas destacadas', value: '3' },
     { label: 'Piezas gráficas', value: '100+' },
+    { label: 'Áreas de especialidad', value: '6' },
   ],
 }
 
@@ -19,7 +20,7 @@ export const services: Service[] = [
   {
     id: 'branding',
     title: 'Branding',
-    description: 'Diseño de identidad visual, papelería corporativa y piezas que fortalecen la imagen de una marca.',
+    description: 'Construcción de identidad visual, papelería corporativa y elementos gráficos que fortalecen el reconocimiento de marca.',
   },
   {
     id: 'social',
@@ -29,22 +30,22 @@ export const services: Service[] = [
   {
     id: 'advertising',
     title: 'Publicidad',
-    description: 'Diseño de flyers, material POP-UPS y piezas promocionales para medios digitales e impresos.',
+    description: 'Flyers, piezas promocionales, material POP-UP y recursos visuales para campañas comerciales.',
   },
   {
     id: 'editorial',
     title: 'Editorial',
-    description: 'Diseño de catálogos, presentaciones, libros y documentos con una composición visual clara y profesional.',
+    description: 'Catálogos, libros, presentaciones y documentos con una estructura visual clara y profesional.',
   },
   {
     id: 'photography',
     title: 'Fotografía',
-    description: 'Fotografía para productos, moda y contenido visual destinado a fortalecer la presencia de marca.',
+    description: 'Fotografía de productos, moda y contenido visual para complementar la identidad de las marcas.',
   },
   {
     id: 'marketing',
     title: 'Marketing Digital',
-    description: 'Apoyo visual para campañas digitales orientadas al posicionamiento y crecimiento de marcas.',
+    description: 'Diseño de recursos gráficos para campañas digitales y estrategias de comunicación.',
   },
 ]
 
@@ -52,21 +53,21 @@ export const featuredProjects: FeaturedProject[] = [
   {
     id: 'smartcultivo',
     name: 'SmartCultivo',
-    image: '/src/assets/featuredprojects/smartcultivo.jpg',
+    image: '/src/assets/featuredprojects/smartcultivo.svg',
     summary:
       'Desarrollo de contenido para redes sociales, branding corporativo y piezas publicitarias para el sector agrícola.',
   },
   {
     id: 'thissa',
     name: 'Thissa Store',
-    image: '/src/assets/featuredprojects/thissa.png',
+    image: '/src/assets/featuredprojects/thissa.svg',
     summary:
       'Diseño gráfico y marketing digital enfocado en contenido comercial, menús digitales, publicidad y comunicación visual.',
   },
   {
     id: 'osiris',
     name: 'Bar Osiris',
-    image: '/src/assets/featuredprojects/osiris.png',
+    image: '/src/assets/featuredprojects/osiris.svg',
     summary:
       'Diseño de contenido para redes sociales y material promocional para fortalecer la identidad visual del establecimiento.',
   },

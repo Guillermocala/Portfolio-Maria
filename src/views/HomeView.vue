@@ -7,13 +7,24 @@ import BaseCard from "@/components/ui/BaseCard.vue";
 import BaseContainer from "@/components/ui/BaseContainer.vue";
 import BaseSection from "@/components/ui/BaseSection.vue";
 import BaseTitle from "@/components/ui/BaseTitle.vue";
+import BaseQrCard from "@/components/ui/BaseQrCard.vue";
 import heroPhoto from "@/assets/hero.jpeg";
 import BaseCarousel from "@/components/ui/BaseCarousel.vue";
+import BaseTimeline from "@/components/base/BaseTimeline.vue";
+import AdvertisingCard from "@/components/base/AdvertisingCard.vue";
+import BaseEditorialViewer from "@/components/base/BaseEditorialViewer.vue";
+import MenuCard from "@/components/base/MenuCard.vue";
 import { navLinks } from "@/data/navigation";
 import { profile, services, featuredProjects } from "@/data/profile";
 import { contactLinks } from "@/data/contact";
 import { experienceEntries } from "@/data/experience";
 import { tools } from "@/data/tools";
+import { onMounted, onUnmounted, watch } from "vue";
+/* import type { EditorialDocument } from "@/data/types"; */
+
+import bookPdf from "@/assets/portfolio/editorial/El_rincon_del_conocimiento.pdf";
+import thissaPdf from "@/assets/portfolio/editorial/Presentacion_Thissa_Store.pdf";
+import catalogPdf from "@/assets/portfolio/editorial/Catalogo_don_josue.pdf";
 
 const { scrollToSection } = useScrollTo();
 
@@ -23,57 +34,205 @@ type PortfolioPanel = {
   description: string;
   folder: string;
   images: string[];
+  direction: CarouselDirection;
 };
 
-const portfolioMedia = import.meta.glob(
-  "../assets/portfolio/*/*.{png,jpg,jpeg,webp,avif}",
-  {
-    eager: true,
-    import: "default",
-  },
-) as Record<string, string>;
+type QrImage = {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  href: string;
+};
 
-const getImagesForFolder = (folder: string) =>
-  Object.entries(portfolioMedia)
-    .filter(([path]) => path.includes(`/${folder}/`))
+type EditorialDocument = {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  cover: string;
+  pdf: string;
+  viewer: 'flipbook' | 'pdf';
+}
+
+const portfolioMedia = import.meta.glob("../assets/portfolio/**/*", {
+  eager: true,
+  import: "default",
+}) as Record<string, string>;
+
+const supportedExtensions = new Set([
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".jpe",
+  ".jfif",
+  ".webp",
+  ".avif",
+  ".svg",
+  ".gif",
+]);
+
+const folderAliases: Record<string, string[]> = {
+  publicidad: ["advertising"],
+  advertising: ["advertising"],
+  editorial: ["advertising"],
+};
+
+const getImagesForFolder = (folder: string) => {
+  const aliases = folderAliases[folder] ?? [folder];
+
+  return Object.entries(portfolioMedia)
+    .filter(([path]) => {
+      const normalizedPath = path.toLowerCase();
+      const extension = normalizedPath.slice(normalizedPath.lastIndexOf("."));
+
+      return (
+        supportedExtensions.has(extension) &&
+        aliases.some((alias) =>
+          normalizedPath.includes(`/${alias.toLowerCase()}/`),
+        )
+      );
+    })
     .map(([, src]) => src);
+};
 
 const portfolioPanels: PortfolioPanel[] = [
   {
-    id: "social-media",
-    title: "Redes sociales",
+    id: "smartcultivo",
+    title: "SmartCultivo",
     description:
-      "Contenido visual para marcas que necesitan consistencia, claridad y una presencia atractiva.",
-    folder: "social-media",
-    images: getImagesForFolder("social-media"),
+      "Contenido enfocado en innovación, agricultura y tecnología para comunicar productos, procesos y novedades de la marca.",
+    folder: "smartcultivo",
+    images: getImagesForFolder("smartcultivo"),
+    direction: "left",
   },
   {
-    id: "branding",
-    title: "Branding",
+    id: "thissa",
+    title: "Thissa Store",
     description:
-      "Identidad visual, papelería y piezas que traducen la personalidad de la marca.",
-    folder: "branding",
-    images: getImagesForFolder("branding"),
+      "Publicaciones comerciales orientadas a promocionar productos, ofertas y campañas para redes sociales.",
+    folder: "thissa",
+    images: getImagesForFolder("thissa"),
+    direction: "left",
   },
   {
-    id: "qrs",
-    title: "QRs e interacción",
+    id: "osiris",
+    title: "Bar Osiris",
     description:
-      "Materiales pensados para cerrar la experiencia de marca desde lo físico al digital.",
-    folder: "qrs",
-    images: getImagesForFolder("qrs"),
+      "Diseños promocionales para eventos, bebidas y campañas publicitarias del establecimiento.",
+    folder: "osiris",
+    images: getImagesForFolder("osiris"),
+    direction: "left",
+  },
+];
+
+const portfolioQrs: QrImage[] = [
+  {
+    id: "qr1",
+    title: "",
+    description: "",
+    image: "/src/assets/portfolio/qrs/qr1.svg",
+    href: "https://smartcultivo.com/",
   },
   {
-    id: "publicidad",
-    title: "Publicidad y editorial",
+    id: "qr2",
+    title: "",
+    description: "",
+    image: "/src/assets/portfolio/qrs/qr2.svg",
+    href: "https://thissa.store/quesichichacol",
+  },
+  {
+    id: "qr3",
+    title: "",
+    description: "",
+    image: "/src/assets/portfolio/qrs/qr3.svg",
+    href: "https://thissa.store/bubaluu_bq",
+  },
+  {
+    id: "qr4",
+    title: "",
+    description: "",
+    image: "/src/assets/portfolio/qrs/qr4.svg",
+    href: "https://thissa.store/ladeliciagourmet",
+  },
+  {
+    id: "qr5",
+    title: "",
+    description: "",
+    image: "/src/assets/portfolio/qrs/qr5.svg",
+    href: "https://thissa.store/charlabarra",
+  },
+  {
+    id: "qr6",
+    title: "",
+    description: "",
+    image: "/src/assets/portfolio/qrs/qr6.svg",
+    href: "https://thissa.store/oyebonitarestaurantebar",
+  },
+  {
+    id: "qr7",
+    title: "",
+    description: "",
+    image: "/src/assets/portfolio/qrs/qr7.svg",
+    href: "https://thissa.store/hotelelcisne",
+  },
+  {
+    id: "qr8",
+    title: "",
+    description: "",
+    image: "/src/assets/portfolio/qrs/qr8.svg",
+    href: "https://thissa.store/hotelelcisne",
+  },
+  {
+    id: "qr9",
+    title: "",
+    description: "",
+    image: "/src/assets/portfolio/qrs/qr9.png",
+    href: "https://thissa.store/",
+  },
+];
+
+const editorialDocuments: EditorialDocument[] = [
+  {
+    id: "book",
+    title: "El Rincón del Conocimiento",
+    subtitle: "Libro educativo",
     description:
-      "Flyers, POP-UPS, menús y piezas editoriales de alto impacto visual.",
-    folder: "publicidad",
-    images: getImagesForFolder("publicidad"),
+      "Proyecto editorial diagramado en formato horizontal para una experiencia de lectura inmersiva.",
+    cover: "/src/assets/portfolio/editorial/cover_1.png",
+    pdf: bookPdf,
+    viewer: "flipbook",
+  },
+
+  {
+    id: "thissa",
+    title: "Presentación Thissa Store",
+    subtitle: "Presentación corporativa",
+    description:
+      "Presentación desarrollada para comunicar la identidad y propuesta de valor de la marca.",
+    cover: "/src/assets/portfolio/editorial/cover_2.png",
+    pdf: thissaPdf,
+    viewer: "pdf",
+  },
+
+  {
+    id: "don-josue",
+    title: "Catálogo de Productos Don Josué",
+    subtitle: "Catálogo comercial",
+    description:
+      "Catálogo diseñado para exhibir productos mediante una estructura clara y atractiva.",
+    cover: "/src/assets/portfolio/editorial/cover_3.png",
+    pdf: catalogPdf,
+    viewer: "flipbook",
   },
 ];
 
 const currentYear = computed(() => new Date().getFullYear());
+const brandingImages = getImagesForFolder("branding");
+const advertisingImages = getImagesForFolder("advertising");
+const digitalMenuImages = getImagesForFolder("digital-menus");
+const physicalMenuImages = getImagesForFolder("physical-menus");
+const photographyImages = getImagesForFolder("photography");
 </script>
 
 <template>
@@ -134,7 +293,7 @@ const currentYear = computed(() => new Date().getFullYear());
           <div class="split-grid">
             <div>
               <BaseTitle tag="h2" subtitle="Sobre mí"
-                >Una práctica cercana, estratégica y visual</BaseTitle
+                >Diseño con propósito, estrategia y creatividad.</BaseTitle
               >
               <p class="section-copy">{{ profile.about }}</p>
             </div>
@@ -144,8 +303,7 @@ const currentYear = computed(() => new Date().getFullYear());
                 :key="stat.label"
                 class="stat-pill"
               >
-                <strong>{{ stat.value }}</strong>
-                <span>{{ stat.label }}</span>
+                <strong>{{ stat.value }} {{ stat.label }}</strong>
               </div>
             </div>
           </div>
@@ -168,24 +326,19 @@ const currentYear = computed(() => new Date().getFullYear());
 
       <BaseSection id="featured">
         <BaseContainer>
-          <BaseTitle tag="h2" subtitle="Proyectos recientes"
+          <BaseTitle
+            tag="h2"
+            subtitle="Una selección de proyectos que reúnen diferentes áreas del diseño gráfico, donde cada propuesta fue desarrollada de acuerdo con las necesidades y objetivos de cada cliente."
             >Destacados</BaseTitle
           >
           <div class="card-grid featured-grid">
             <BaseCard
               v-for="project in featuredProjects"
-              :key="project.id"
+              :key="project.image"
               :image="project.image"
               :title="project.name"
               :text="project.summary"
             />
-          </div>
-          <div class="section-actions">
-            <BaseButton
-              variant="secondary"
-              @click="scrollToSection('portfolio')"
-              >Explorar portafolio</BaseButton
-            >
           </div>
         </BaseContainer>
       </BaseSection>
@@ -195,51 +348,214 @@ const currentYear = computed(() => new Date().getFullYear());
           <BaseTitle tag="h2" subtitle="Diseño gráfico, identidad y contenidos"
             >Portafolio</BaseTitle
           >
-          <div class="portfolio-stack">
-            <div
-              v-for="panel in portfolioPanels"
-              :key="panel.id"
-              class="portfolio-panel"
-            >
-              <div class="portfolio-panel__header">
-                <h3>{{ panel.title }}</h3>
-                <p>{{ panel.description }}</p>
-              </div>
+          <div>
+            <BaseSection id="social-media">
+              <BaseContainer>
+                <BaseTitle tag="h2">Redes sociales</BaseTitle>
+                <div class="portfolio-stack">
+                  <div
+                    v-for="panel in portfolioPanels"
+                    :key="panel.id"
+                    class="portfolio-panel"
+                  >
+                    <div class="portfolio-panel__header">
+                      <h3>{{ panel.title }}</h3>
+                      <p>{{ panel.description }}</p>
+                    </div>
 
-              <div v-if="panel.images.length" class="portfolio-carousel">
-                <BaseCarousel :images="panel.images" />
-              </div>
+                    <div v-if="panel.images.length" class="portfolio-carousel">
+                      <BaseCarousel
+                        :images="panel.images"
+                        :direction="panel.direction"
+                      />
+                    </div>
 
-              <div v-else class="portfolio-carousel portfolio-carousel--empty">
-                <p>
-                  Añade imágenes en la carpeta de {{ panel.folder }} para ver el
-                  carrusel.
-                </p>
-              </div>
-            </div>
+                    <div
+                      v-else
+                      class="portfolio-carousel portfolio-carousel--empty"
+                    >
+                      <p>
+                        Añade imágenes en la carpeta de {{ panel.folder }} para
+                        ver el carrusel.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </BaseContainer>
+            </BaseSection>
+            <BaseSection id="branding">
+              <BaseContainer>
+                <BaseTitle tag="h2">BRANDING</BaseTitle>
+                <div class="">
+                  <div class="portfolio-panel">
+                    <div class="portfolio-panel__header">
+                      <p class="branding-description">
+                        Elementos corporativos desarrollados para fortalecer la
+                        identidad visual de diferentes marcas, incluyendo
+                        papelería, identificaciones y piezas institucionales.
+                      </p>
+                      <div class="branding-grid">
+                        <img
+                          :src="brandingImages[0]"
+                          alt=""
+                          class="branding-image branding-image--vertical"
+                        />
+
+                        <img
+                          :src="brandingImages[1]"
+                          alt=""
+                          class="branding-image branding-image--horizontal"
+                        />
+
+                        <img
+                          :src="brandingImages[2]"
+                          alt=""
+                          class="branding-image branding-image--vertical"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </BaseContainer>
+            </BaseSection>
+
+            <BaseSection id="qrs">
+              <BaseContainer>
+                <BaseTitle
+                  tag="h2"
+                  subtitle="Códigos QR diseñados como herramientas de interacción que conectan materiales impresos con contenido digital, facilitando el acceso a menús, catálogos y recursos adicionales."
+                >
+                  QR Interactivos
+                </BaseTitle>
+                <div class="qr-grid">
+                  <BaseQrCard
+                    v-for="qr in portfolioQrs"
+                    :key="qr.image"
+                    :image="qr.image"
+                    :title="qr.title"
+                    :description="qr.description"
+                    :href="qr.href"
+                  />
+                </div>
+              </BaseContainer>
+            </BaseSection>
+
+            <BaseSection id="advertising">
+              <BaseContainer>
+                <BaseTitle
+                  tag="h2"
+                  subtitle="Material gráfico diseñado para campañas promocionales, comunicación comercial y difusión de productos o servicios mediante flyers y piezas publicitarias."
+                >
+                  Publicidad
+                </BaseTitle>
+                <div class="advertising-grid">
+                  <AdvertisingCard
+                    v-for="image in advertisingImages"
+                    :key="image"
+                    :image="image"
+                  />
+                </div>
+              </BaseContainer>
+            </BaseSection>
+
+            <BaseSection id="menus">
+              <BaseContainer>
+                <BaseTitle
+                  tag="h2"
+                  subtitle="Diseño de menús digitales y físicos adaptados para dispositivos móviles e impresión, priorizando la organización de la información y una experiencia visual clara para el usuario."
+                >
+                  Menús
+                </BaseTitle>
+
+                <!-- Menús digitales -->
+                <div class="menus-section">
+                  <h3 class="menus-section__title">Menús Digitales</h3>
+                  <p class="menus-section__description">
+                    Diseños optimizados para visualizarse desde teléfonos
+                    móviles mediante códigos QR.
+                  </p>
+
+                  <div class="menus-gallery">
+                    <MenuCard
+                      v-for="digitalImage in digitalMenuImages"
+                      :key="digitalImage"
+                      :image="digitalImage"
+                      variant="mobile"
+                    />
+                  </div>
+                </div>
+
+                <!-- Menús físicos -->
+                <div class="menus-section">
+                  <h3 class="menus-section__title">Menús Impresos</h3>
+                  <p class="menus-section__description">
+                    Propuestas pensadas para impresión en distintos formatos,
+                    manteniendo la identidad visual y la organización del
+                    contenido.
+                  </p>
+
+                  <div class="menus-grid">
+                    <MenuCard
+                      v-for="physicalImage in physicalMenuImages"
+                      :key="physicalImage"
+                      :image="physicalImage"
+                      variant="desktop"
+                    />
+                  </div>
+                </div>
+              </BaseContainer>
+            </BaseSection>
+
+            <BaseSection id="photos">
+              <BaseContainer>
+                <BaseTitle
+                  tag="h2"
+                  subtitle="Registro fotográfico orientado a moda, productos y contenido comercial como complemento para campañas publicitarias e identidad visual."
+                >
+                  Fotografía
+                </BaseTitle>
+                <div class="advertising-grid">
+                  <AdvertisingCard
+                    v-for="image in photographyImages"
+                    :key="image"
+                    :image="image"
+                  />
+                </div>
+              </BaseContainer>
+            </BaseSection>
+
+            <BaseSection id="editorial">
+              <BaseContainer>
+                <h2>Contruyendo seccion de editorial...</h2>
+                <!-- <BaseTitle
+                  tag="h2"
+                  subtitle="Proyectos editoriales desarrollados para distintos formatos de comunicación visual."
+                >
+                  Editorial
+                </BaseTitle>
+                <div>
+                  <p>building...</p>
+                </div>
+                 <div>
+
+                  <BaseEditorialViewer :documents="editorialDocuments" />
+                </div> -->
+              </BaseContainer>
+            </BaseSection>
           </div>
         </BaseContainer>
       </BaseSection>
 
       <BaseSection id="experience">
         <BaseContainer>
-          <BaseTitle tag="h2" subtitle="Trayectoria profesional"
-            >Experiencia</BaseTitle
+          <BaseTitle
+            tag="h2"
+            subtitle="Un recorrido por los proyectos y experiencias profesionales que han fortalecido mi enfoque creativo y mi desarrollo como diseñadora gráfica."
           >
-          <div class="timeline">
-            <article
-              v-for="entry in experienceEntries"
-              :key="entry.title"
-              class="timeline__item"
-            >
-              <span class="timeline__year">{{ entry.year }}</span>
-              <div>
-                <h3>{{ entry.title }}</h3>
-                <p class="timeline__company">{{ entry.company }}</p>
-                <p>{{ entry.description }}</p>
-              </div>
-            </article>
-          </div>
+            Experiencia
+          </BaseTitle>
+
+          <BaseTimeline :items="experienceEntries" />
         </BaseContainer>
       </BaseSection>
 
@@ -247,9 +563,14 @@ const currentYear = computed(() => new Date().getFullYear());
         <BaseContainer>
           <BaseTitle tag="h2">Herramientas</BaseTitle>
           <div class="tool-list">
-            <span v-for="tool in tools" :key="tool.name" class="tool-pill"
-              ><img :width="100" :height="100" :src="tool.src" :alt="tool.name"
-            /></span>
+            <span v-for="tool in tools" :key="tool.name" class="tool-pill">
+              <img
+                :width="100"
+                :height="100"
+                :src="tool.src"
+                :alt="tool.name"
+              />
+            </span>
           </div>
         </BaseContainer>
       </BaseSection>
@@ -387,6 +708,45 @@ const currentYear = computed(() => new Date().getFullYear());
   }
 }
 
+.branding-description {
+  max-width: 700px;
+  margin: 0 0 2rem;
+}
+
+.branding-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  grid-template-rows: repeat(2, 18rem);
+  gap: 1.5rem;
+}
+
+.branding-image {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  background: #fff;
+  border-radius: 16px;
+  padding: 1rem;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.branding-image--vertical:first-child {
+  grid-row: 1 / 3;
+}
+
+.branding-image--horizontal {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.branding-image--vertical:last-child {
+  grid-column: 2;
+  grid-row: 2;
+}
+
 .section-copy {
   font-size: 1rem;
   line-height: 1.8;
@@ -437,7 +797,7 @@ const currentYear = computed(() => new Date().getFullYear());
 
 .portfolio-stack {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 2rem;
   align-items: start;
 }
@@ -455,7 +815,7 @@ const currentYear = computed(() => new Date().getFullYear());
 }
 
 .portfolio-panel__header {
-  min-height:90px;
+  min-height: 90px;
   gap: $space-2;
 }
 
@@ -514,6 +874,32 @@ const currentYear = computed(() => new Date().getFullYear());
   background: $color-surface;
   color: $color-text-secondary;
   text-align: center;
+}
+
+.qr-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+  align-items: stretch;
+}
+
+@media (max-width: 1200px) {
+  .qr-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .qr-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .qr-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .portfolio-panel h3,
@@ -587,5 +973,79 @@ const currentYear = computed(() => new Date().getFullYear());
   flex-direction: column;
   gap: $space-4;
   color: $color-text-secondary;
+}
+
+/* seccion para publicidad */
+.advertising-grid {
+  columns: 3 320px;
+
+  column-gap: 1.5rem;
+}
+
+.advertising-card {
+  width: 100%;
+
+  margin-bottom: 1.5rem;
+
+  break-inside: avoid;
+}
+
+@media (max-width: 1200px) {
+  .advertising-grid {
+    columns: 2 260px;
+  }
+}
+
+@media (max-width: 700px) {
+  .advertising-grid {
+    columns: 1;
+  }
+}
+
+/* seccion para menus */
+
+.menus-section {
+  margin-top: 3rem;
+}
+
+.menus-section:first-of-type {
+  margin-top: 0;
+}
+
+.menus-section__title {
+  margin-bottom: 0.5rem;
+}
+
+.menus-section__description {
+  margin-bottom: 1.5rem;
+
+  color: var(--text-secondary);
+}
+
+/* galeria horizontal (menus digitales) */
+.menus-gallery {
+  display: flex;
+
+  gap: 1.5rem;
+
+  overflow-x: auto;
+
+  padding: 0.5rem 0.25rem 1rem;
+
+  scroll-snap-type: x proximity;
+}
+
+.menus-gallery > * {
+  scroll-snap-align: start;
+}
+
+/* grid (menus fisicos) */
+
+.menus-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+
+  gap: 2rem;
 }
 </style>

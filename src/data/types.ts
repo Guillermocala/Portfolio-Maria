@@ -90,3 +90,13 @@ export interface NavLink {
   id: string
   label: string
 }
+
+export interface EditorialDocument {
+  id: string
+  title: string
+  subtitle: string
+  description: string
+  cover: string
+  pdf: string
+  viewer: 'flipbook' | 'pdf'
+}
