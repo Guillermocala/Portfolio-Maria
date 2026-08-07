@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useScrollTo } from "@/composables/useScrollTo";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import BaseBadge from "@/components/ui/BaseBadge.vue";
@@ -11,9 +11,10 @@ import BaseQrCard from "@/components/ui/BaseQrCard.vue";
 import heroPhoto from "@/assets/hero.jpeg";
 import BaseCarousel from "@/components/ui/BaseCarousel.vue";
 import BaseTimeline from "@/components/base/BaseTimeline.vue";
-/* import PhotoCard from "@/components/base/PhotoCard.vue"; */
+import PhotoCard from "@/components/base/PhotoCard.vue";
 import AdvertisingCard from "@/components/base/AdvertisingCard.vue";
-/* import BaseEditorialViewer from "@/components/base/BaseEditorialViewer.vue"; */
+import BaseEditorialViewer from "@/components/base/BaseEditorialViewer.vue";
+import BaseExpandableGallery from "@/components/base/BaseExpandableGallery.vue";
 import MenuCard from "@/components/base/MenuCard.vue";
 import { navLinks } from "@/data/navigation";
 import { profile, services, featuredProjects } from "@/data/profile";
@@ -23,9 +24,12 @@ import { tools } from "@/data/tools";
 /* import { onMounted, onUnmounted, watch } from "vue"; */
 /* import type { EditorialDocument } from "@/data/types"; */
 
-/* import bookPdf from "@/assets/portfolio/editorial/El_rincon_del_conocimiento.pdf";
+import rinconConocimientoPdf from "@/assets/portfolio/editorial/El_rincon_del_conocimiento.pdf";
+import coverRinconConocimiento from "@/assets/portfolio/editorial/cover_1.png";
 import thissaPdf from "@/assets/portfolio/editorial/Presentacion_Thissa_Store.pdf";
-import catalogPdf from "@/assets/portfolio/editorial/Catalogo_don_josue.pdf"; */
+import coverThissaPdf from "@/assets/portfolio/editorial/cover_2.png";
+import catalogPdf from "@/assets/portfolio/editorial/Catalogo_don_josue.pdf";
+import coverCatalogPdf from "@/assets/portfolio/editorial/cover_3.png";
 
 import qr1 from "@/assets/portfolio/qrs/qr1.svg";
 import qr2 from "@/assets/portfolio/qrs/qr2.svg";
@@ -58,22 +62,20 @@ type QrImage = {
   href: string;
 };
 
-/* type EditorialDocument = {
+type EditorialDocument = {
   id: string;
   title: string;
   subtitle: string;
   description: string;
   cover: string;
   pdf: string;
-  viewer: 'flipbook' | 'pdf';
-} */
+  viewer: "flipbook" | "pdf";
+};
 
 const portfolioMedia = import.meta.glob("../assets/portfolio/**/*", {
   eager: true,
   import: "default",
 }) as Record<string, string>;
-
-console.log(Object.keys(portfolioMedia));
 
 const supportedExtensions = new Set([
   ".png",
@@ -200,15 +202,15 @@ const portfolioQrs: QrImage[] = [
   },
 ];
 
-/* const editorialDocuments: EditorialDocument[] = [
+const editorialDocuments: EditorialDocument[] = [
   {
     id: "book",
     title: "El Rincón del Conocimiento",
     subtitle: "Libro educativo",
     description:
       "Proyecto editorial diagramado en formato horizontal para una experiencia de lectura inmersiva.",
-    cover: "/src/assets/portfolio/editorial/cover_1.png",
-    pdf: bookPdf,
+    cover: coverRinconConocimiento,
+    pdf: rinconConocimientoPdf,
     viewer: "flipbook",
   },
 
@@ -218,7 +220,7 @@ const portfolioQrs: QrImage[] = [
     subtitle: "Presentación corporativa",
     description:
       "Presentación desarrollada para comunicar la identidad y propuesta de valor de la marca.",
-    cover: "/src/assets/portfolio/editorial/cover_2.png",
+    cover: coverThissaPdf,
     pdf: thissaPdf,
     viewer: "pdf",
   },
@@ -229,11 +231,11 @@ const portfolioQrs: QrImage[] = [
     subtitle: "Catálogo comercial",
     description:
       "Catálogo diseñado para exhibir productos mediante una estructura clara y atractiva.",
-    cover: "/src/assets/portfolio/editorial/cover_3.png",
+    cover: coverCatalogPdf,
     pdf: catalogPdf,
     viewer: "flipbook",
   },
-]; */
+];
 
 const currentYear = computed(() => new Date().getFullYear());
 const brandingImages = getImagesForFolder("branding");
@@ -241,7 +243,19 @@ const advertisingImages = getImagesForFolder("advertising");
 const digitalMenuImages = getImagesForFolder("digital-menus");
 const physicalMenuImages = getImagesForFolder("physical-menus");
 const photographyImages = getImagesForFolder("photography");
-console.log(photographyImages);
+
+/* para los qrs */
+const visibleQrCount = 3;
+
+const showAllQrs = ref(false);
+
+const visibleQrs = computed(() => {
+  if (showAllQrs.value) {
+    return portfolioQrs;
+  }
+
+  return portfolioQrs.slice(0, visibleQrCount);
+});
 </script>
 
 <template>
@@ -437,14 +451,34 @@ console.log(photographyImages);
                   QR Interactivos
                 </BaseTitle>
                 <div class="qr-grid">
-                  <BaseQrCard
-                    v-for="qr in portfolioQrs"
-                    :key="qr.image"
-                    :image="qr.image"
-                    :title="qr.title"
-                    :description="qr.description"
-                    :href="qr.href"
-                  />
+                  <!-- QR visibles inicialmente + adicionales -->
+                  <TransitionGroup
+                    name="qr-list"
+                    tag="div"
+                    class="qr-grid__items"
+                  >
+                    <BaseQrCard
+                      v-for="(qr, __) in visibleQrs"
+                      :key="qr.image"
+                      :image="qr.image"
+                      :title="qr.title"
+                      :description="qr.description"
+                      :href="qr.href"
+                    />
+                  </TransitionGroup>
+
+                  <!-- Toggle FUERA del TransitionGroup -->
+                  <div class="qr-grid__toggle">
+                    <Transition name="qr-toggle" mode="out-in">
+                      <BaseQrCard
+                        v-if="portfolioQrs.length > visibleQrCount"
+                        :key="showAllQrs ? 'less' : 'more'"
+                        :view-more="true"
+                        :title="showAllQrs ? 'Ver menos' : 'Ver más'"
+                        @click="showAllQrs = !showAllQrs"
+                      />
+                    </Transition>
+                  </div>
                 </div>
               </BaseContainer>
             </BaseSection>
@@ -457,13 +491,18 @@ console.log(photographyImages);
                 >
                   Publicidad
                 </BaseTitle>
-                <div class="advertising-grid">
-                  <AdvertisingCard
-                    v-for="image in advertisingImages"
-                    :key="image"
-                    :image="image"
-                  />
-                </div>
+                <BaseExpandableGallery
+                  :total-items="advertisingImages.length"
+                  collapsed-height="500px"
+                >
+                  <div class="advertising-grid">
+                    <AdvertisingCard
+                      v-for="image in advertisingImages"
+                      :key="image"
+                      :image="image"
+                    />
+                  </div>
+                </BaseExpandableGallery>
               </BaseContainer>
             </BaseSection>
 
@@ -489,6 +528,7 @@ console.log(photographyImages);
                       v-for="digitalImage in digitalMenuImages"
                       :key="digitalImage"
                       :image="digitalImage"
+                      :images="digitalMenuImages"
                       variant="mobile"
                     />
                   </div>
@@ -508,6 +548,7 @@ console.log(photographyImages);
                       v-for="physicalImage in physicalMenuImages"
                       :key="physicalImage"
                       :image="physicalImage"
+                      :images="physicalMenuImages"
                       variant="desktop"
                     />
                   </div>
@@ -517,40 +558,40 @@ console.log(photographyImages);
 
             <BaseSection id="photos">
               <BaseContainer>
-                <h2>Contruyendo seccion de fotografía...</h2>
-                <!-- <BaseTitle
+                <BaseTitle
                   tag="h2"
                   subtitle="Registro fotográfico orientado a moda, productos y contenido comercial como complemento para campañas publicitarias e identidad visual."
                 >
                   Fotografía
                 </BaseTitle>
 
-                <div class="photo-grid">
-                  <PhotoCard
-                    v-for="photographyImage in photographyImages"
-                    :key="photographyImage"
-                    :image="photographyImage"
-                  />
-                </div> -->
+                <BaseExpandableGallery
+                  :total-items="photographyImages.length"
+                  collapsed-height="550px"
+                >
+                  <div class="photo-grid">
+                    <PhotoCard
+                      v-for="photographyImage in photographyImages"
+                      :key="photographyImage"
+                      :image="photographyImage"
+                    />
+                  </div>
+                </BaseExpandableGallery>
               </BaseContainer>
             </BaseSection>
 
             <BaseSection id="editorial">
               <BaseContainer>
-                <h2>Contruyendo seccion de editorial...</h2>
-                <!-- <BaseTitle
+                <!-- <h2>Contruyendo seccion de editorial...</h2> -->
+                <BaseTitle
                   tag="h2"
                   subtitle="Proyectos editoriales desarrollados para distintos formatos de comunicación visual."
                 >
                   Editorial
                 </BaseTitle>
                 <div>
-                  <p>building...</p>
-                </div>
-                 <div>
-
                   <BaseEditorialViewer :documents="editorialDocuments" />
-                </div> -->
+                </div>
               </BaseContainer>
             </BaseSection>
           </div>
@@ -771,6 +812,7 @@ console.log(photographyImages);
   border-radius: $radius-card;
   box-shadow: $shadow-small;
   padding: $space-6;
+  height: 100%;
 }
 
 .stats-card {
@@ -822,6 +864,7 @@ console.log(photographyImages);
   display: flex;
   flex-direction: column;
   gap: $space-2;
+  margin-bottom: auto;
 }
 
 .portfolio-carousel {
@@ -887,6 +930,97 @@ console.log(photographyImages);
   gap: 1.5rem;
   margin-top: 2rem;
   align-items: stretch;
+}
+
+.qr-grid__items {
+  display: contents;
+}
+
+/* ================================
+   TRANSICIÓN DE LOS QR
+================================ */
+
+.qr-list-enter-active,
+.qr-list-leave-active {
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.qr-list-enter-from {
+  opacity: 0;
+
+  transform: translateY(20px) scale(0.96);
+}
+
+.qr-list-enter-to {
+  opacity: 1;
+
+  transform: translateY(0) scale(1);
+}
+
+.qr-list-leave-from {
+  opacity: 1;
+
+  transform: translateY(0) scale(1);
+}
+
+.qr-list-leave-to {
+  opacity: 0;
+
+  transform: translateY(20px) scale(0.96);
+}
+
+/*
+ * Permite que los elementos restantes
+ * se reposicionen suavemente cuando
+ * desaparecen los QR.
+ */
+.qr-list-move {
+  transition: transform 0.4s ease;
+}
+
+.qr-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+  align-items: start;
+}
+
+.qr-grid__items {
+  display: contents;
+}
+
+.qr-grid__toggle {
+  min-width: 0;
+}
+
+.qr-toggle-enter-active,
+.qr-toggle-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.qr-toggle-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.qr-toggle-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.qr-toggle-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.qr-toggle-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 
 @media (max-width: 1200px) {

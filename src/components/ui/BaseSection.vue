@@ -1,39 +1,47 @@
 <script setup lang="ts">
-import { useIntersectionObserver } from '@vueuse/core'
-import { ref } from 'vue'
+import { ref } from "vue";
+import { useIntersectionObserver } from "@vueuse/core";
 
-defineOptions({ name: 'BaseSection' })
+defineOptions({
+  name: "BaseSection",
+});
 
 const props = withDefaults(
   defineProps<{
-    id?: string
-    animate?: boolean
+    id?: string;
+    animate?: boolean;
   }>(),
-  { animate: true },
-)
+  {
+    animate: true,
+  },
+);
 
-const sectionRef = ref<HTMLElement | null>(null)
-const isVisible = ref(!props.animate)
+const sectionRef = ref<HTMLElement | null>(null);
 
-if (props.animate) {
-  useIntersectionObserver(
-    sectionRef,
-    ([entry]) => {
-      if (entry?.isIntersecting) {
-        isVisible.value = true
-      }
-    },
-    { threshold: 0.1 },
-  )
-}
+const isVisible = ref(!props.animate);
+
+useIntersectionObserver(
+  sectionRef,
+  ([entry]) => {
+    if (entry?.isIntersecting) {
+      isVisible.value = true;
+    }
+  },
+  {
+    threshold: 0.05,
+  },
+);
 </script>
 
 <template>
   <section
-    :id="id"
     ref="sectionRef"
+    :id="id"
     class="section"
-    :class="{ 'section-fade': animate, 'is-visible': isVisible }"
+    :class="{
+      'section-fade': animate,
+      'is-visible': isVisible,
+    }"
   >
     <slot />
   </section>

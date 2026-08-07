@@ -2,6 +2,7 @@
 defineProps<{
   image: string;
 }>();
+console.log("componente")
 </script>
 
 <template>
