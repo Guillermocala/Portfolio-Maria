@@ -26,8 +26,8 @@ import { tools } from "@/data/tools";
 
 import rinconConocimientoPdf from "@/assets/portfolio/editorial/El_rincon_del_conocimiento.pdf";
 import coverRinconConocimiento from "@/assets/portfolio/editorial/cover_1.png";
-import thissaPdf from "@/assets/portfolio/editorial/Presentacion_Thissa_Store.pdf";
-import coverThissaPdf from "@/assets/portfolio/editorial/cover_2.png";
+/* import thissaPdf from "@/assets/portfolio/editorial/Presentacion_Thissa_Store.pdf";
+import coverThissaPdf from "@/assets/portfolio/editorial/cover_2.png"; */
 import catalogPdf from "@/assets/portfolio/editorial/Catalogo_don_josue.pdf";
 import coverCatalogPdf from "@/assets/portfolio/editorial/cover_3.png";
 
@@ -213,7 +213,7 @@ const editorialDocuments: EditorialDocument[] = [
     pdf: rinconConocimientoPdf,
     viewer: "flipbook",
   },
-
+/* 
   {
     id: "thissa",
     title: "Presentación Thissa Store",
@@ -223,7 +223,7 @@ const editorialDocuments: EditorialDocument[] = [
     cover: coverThissaPdf,
     pdf: thissaPdf,
     viewer: "pdf",
-  },
+  }, */
 
   {
     id: "don-josue",
