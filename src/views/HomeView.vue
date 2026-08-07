@@ -315,7 +315,7 @@ const visibleQrs = computed(() => {
         <BaseContainer>
           <div class="split-grid">
             <div>
-              <BaseTitle tag="h2" subtitle="Sobre mí"
+              <BaseTitle tag="h2"
                 >Diseño con propósito, estrategia y creatividad.</BaseTitle
               >
               <p class="section-copy">{{ profile.about }}</p>
