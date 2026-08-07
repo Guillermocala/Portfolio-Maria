@@ -11,7 +11,7 @@ import BaseQrCard from "@/components/ui/BaseQrCard.vue";
 import heroPhoto from "@/assets/hero.jpeg";
 import BaseCarousel from "@/components/ui/BaseCarousel.vue";
 import BaseTimeline from "@/components/base/BaseTimeline.vue";
-import PhotoCard from "@/components/base/PhotoCard.vue";
+/* import PhotoCard from "@/components/base/PhotoCard.vue"; */
 import AdvertisingCard from "@/components/base/AdvertisingCard.vue";
 /* import BaseEditorialViewer from "@/components/base/BaseEditorialViewer.vue"; */
 import MenuCard from "@/components/base/MenuCard.vue";
@@ -97,8 +97,7 @@ const getImagesForFolder = (folder: string) => {
       const extension = normalized.slice(normalized.lastIndexOf("."));
 
       return (
-        normalized.includes(folderPath) &&
-        supportedExtensions.has(extension)
+        normalized.includes(folderPath) && supportedExtensions.has(extension)
       );
     })
     .map(([, src]) => src)
@@ -518,7 +517,8 @@ console.log(photographyImages);
 
             <BaseSection id="photos">
               <BaseContainer>
-                <BaseTitle
+                <h2>Contruyendo seccion de fotografía...</h2>
+                <!-- <BaseTitle
                   tag="h2"
                   subtitle="Registro fotográfico orientado a moda, productos y contenido comercial como complemento para campañas publicitarias e identidad visual."
                 >
@@ -531,7 +531,7 @@ console.log(photographyImages);
                     :key="photographyImage"
                     :image="photographyImage"
                   />
-                </div>
+                </div> -->
               </BaseContainer>
             </BaseSection>
 
@@ -621,9 +621,8 @@ console.log(photographyImages);
 
 <style scoped lang="scss">
 .hero-section {
-  min-height: calc(100vh - 80px);
-  display: flex;
-  align-items: center;
+  padding-block: 5rem;
+  min-height: auto;
 }
 
 .site-shell {
@@ -727,7 +726,7 @@ console.log(photographyImages);
 .branding-grid {
   display: grid;
   grid-template-columns: 1fr 1.6fr;
-  grid-template-rows: repeat(2, 18rem);
+  grid-auto-rows: 18rem;
   gap: 1.5rem;
 }
 
@@ -808,15 +807,9 @@ console.log(photographyImages);
 
 .portfolio-stack {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2rem;
   align-items: start;
-}
-
-@media (max-width: 900px) {
-  .portfolio-stack {
-    grid-template-columns: 1fr;
-  }
 }
 
 .portfolio-panel {
@@ -826,7 +819,8 @@ console.log(photographyImages);
 }
 
 .portfolio-panel__header {
-  min-height: 90px;
+  display: flex;
+  flex-direction: column;
   gap: $space-2;
 }
 
@@ -996,6 +990,7 @@ console.log(photographyImages);
 .advertising-card {
   width: 100%;
 
+  display: inline-block;
   margin-bottom: 1.5rem;
 
   break-inside: avoid;

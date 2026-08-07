@@ -1,22 +1,16 @@
 <script setup lang="ts">
 defineProps<{
-  image: string
-}>()
+  image: string;
+}>();
 </script>
 
 <template>
   <figure class="photo-card">
-    <img
-      :src="image"
-      :alt="image"
-      class="photo-card__image"
-      loading="lazy"
-    />
+    <img :src="image" :alt="image" class="photo-card__image" loading="lazy" />
   </figure>
 </template>
 
 <style>
-
 .photo-card {
   overflow: hidden;
 
@@ -26,11 +20,14 @@ defineProps<{
 
   box-shadow: var(--shadow-small);
 
-  transition: .25s;
+  transition: 0.25s;
 
   break-inside: avoid;
 
   margin-bottom: 1.5rem;
+
+  display: inline-block;
+  width: 100%;
 }
 
 .photo-card:hover {
