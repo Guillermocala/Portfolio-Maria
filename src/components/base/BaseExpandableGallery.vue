@@ -79,6 +79,9 @@ watch(hasMoreItems, applyCollapsed);
     <div
       v-if="hasMoreItems"
       class="expandable-gallery__control"
+      :class="{
+        'expandable-gallery__control--floating': expanded || animating,
+      }"
     >
       <button
         ref="buttonRef"
@@ -151,6 +154,27 @@ watch(hasMoreItems, applyCollapsed);
   align-items: center;
 
   margin-top: 1.5rem;
+}
+
+/*
+ * Móvil/tablet con la galería abierta: "Ver menos" queda pegado al borde
+ * inferior mientras la galería está en pantalla, para poder colapsarla sin
+ * recorrer todas las imágenes. Se mantiene mientras dura el colapso para que
+ * el anclaje de scroll parta de la posición visible del botón.
+ */
+@media (max-width: 1023px) {
+  .expandable-gallery__control--floating {
+    position: sticky;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 5;
+    pointer-events: none;
+
+    .expandable-gallery__button {
+      pointer-events: auto;
+      background: var(--color-surface);
+      box-shadow: 0 12px 28px rgba(27, 27, 27, 0.18);
+    }
+  }
 }
 
 .expandable-gallery__button {

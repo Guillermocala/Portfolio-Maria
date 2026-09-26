@@ -5,7 +5,6 @@ import { ChevronLeft, ChevronRight } from "@lucide/vue";
 import { useCollapsible } from "@/composables/useCollapsible";
 import { useScrollTo } from "@/composables/useScrollTo";
 import BaseButton from "@/components/ui/BaseButton.vue";
-import BaseBadge from "@/components/ui/BaseBadge.vue";
 import BaseCard from "@/components/ui/BaseCard.vue";
 import BaseContainer from "@/components/ui/BaseContainer.vue";
 import BaseSection from "@/components/ui/BaseSection.vue";
@@ -19,6 +18,7 @@ import AdvertisingCard from "@/components/base/AdvertisingCard.vue";
 import BaseExpandableGallery from "@/components/base/BaseExpandableGallery.vue";
 import MenuCard from "@/components/base/MenuCard.vue";
 import AppNavbar from "@/components/layout/AppNavbar.vue";
+import LinkedInBubble from "@/components/layout/LinkedInBubble.vue";
 import { profile, services, featuredProjects } from "@/data/profile";
 import { contactLinks } from "@/data/contact";
 import { experienceEntries } from "@/data/experience";
@@ -197,6 +197,7 @@ const portfolioQrs: QrImage[] = [
 
 const currentYear = computed(() => new Date().getFullYear());
 const heroNameFirst = computed(() => profile.name.split(" ")[0]);
+const heroRoles = profile.specialty.split(" · ");
 const heroNameRest = computed(() =>
   profile.name.slice(heroNameFirst.value.length),
 );
@@ -281,6 +282,7 @@ onMounted(measureMenus);
 <template>
   <div class="site-shell">
     <AppNavbar />
+    <LinkedInBubble />
 
     <main>
       <BaseSection id="hero" class="hero-section">
@@ -292,10 +294,11 @@ onMounted(measureMenus);
               v-reveal="{ effect: 'fade-left', stagger: 110 }"
               class="hero__content"
             >
-              <BaseBadge
-                label="Diseño editorial y branding"
-                :value="profile.specialty"
-              />
+              <ul class="hero__roles" aria-label="Especialidades">
+                <li v-for="role in heroRoles" :key="role" class="hero__role">
+                  {{ role }}
+                </li>
+              </ul>
               <h1 class="hero__title">
                 <span class="hero__title-accent">{{ heroNameFirst }}</span
                 >{{ heroNameRest }}
@@ -841,6 +844,24 @@ onMounted(measureMenus);
   @media (max-width: 1023px) {
     --reveal-delay-offset: 350ms;
   }
+}
+
+.hero__roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.hero__role {
+  padding: 6px 14px;
+  border-radius: $radius-pill;
+  background: $color-accent-soft;
+  border: 1px solid $color-border-strong;
+  color: $color-accent;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
 }
 
 .hero__title {
