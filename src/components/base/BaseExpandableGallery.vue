@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { useCollapsible } from "@/composables/useCollapsible";
 
 defineOptions({
   name: "BaseExpandableGallery",
@@ -32,19 +33,21 @@ const props = withDefaults(
   },
 );
 
-const expanded = ref(false);
+const contentRef = ref<HTMLElement | null>(null);
+const buttonRef = ref<HTMLElement | null>(null);
 
 const hasMoreItems = computed(
   () => props.totalItems > props.collapsedItems,
 );
 
-const toggle = () => {
-  expanded.value = !expanded.value;
-};
+const { expanded, animating, toggle, applyCollapsed } = useCollapsible({
+  content: contentRef,
+  anchor: buttonRef,
+  collapsedHeight: () => (hasMoreItems.value ? props.collapsedHeight : ""),
+});
 
-const collapsedStyle = computed(() => ({
-  "--collapsed-height": props.collapsedHeight,
-}));
+onMounted(applyCollapsed);
+watch(hasMoreItems, applyCollapsed);
 </script>
 
 <template>
@@ -53,17 +56,17 @@ const collapsedStyle = computed(() => ({
     :class="{
       'expandable-gallery--expanded': expanded,
     }"
-    :style="collapsedStyle"
   >
     <!-- ========================================= -->
     <!-- CONTENIDO -->
     <!-- ========================================= -->
 
     <div
+      ref="contentRef"
       class="expandable-gallery__content"
       :class="{
         'expandable-gallery__content--collapsed':
-          !expanded && hasMoreItems,
+          (!expanded || animating) && hasMoreItems,
       }"
     >
       <slot />
@@ -78,8 +81,10 @@ const collapsedStyle = computed(() => ({
       class="expandable-gallery__control"
     >
       <button
+        ref="buttonRef"
         type="button"
         class="expandable-gallery__button"
+        :aria-expanded="expanded"
         @click="toggle"
       >
         <span>
@@ -117,37 +122,21 @@ const collapsedStyle = computed(() => ({
   overflow: hidden;
   padding: $space-4;
 
-  transition:
-    max-height 0.6s ease,
-    mask-image 0.4s ease;
+  /* duración y curva las fija useCollapsible */
+  transition-property: height;
 }
 
 /*
- * Estado contraído
+ * Estado contraído: degradado inferior para indicar
+ * que existe más contenido.
  */
 .expandable-gallery__content--collapsed {
-  max-height: var(--collapsed-height);
-
-  /*
-   * Degradado inferior para indicar que
-   * existe más contenido.
-   */
   mask-image: linear-gradient(
     to bottom,
     black 0%,
-    black 88%,
+    black 80%,
     transparent 100%
   );
-}
-
-/*
- * Estado expandido
- */
-.expandable-gallery--expanded
-  .expandable-gallery__content {
-  max-height: 10000px;
-
-  mask-image: none;
 }
 
 /* =========================================
@@ -175,9 +164,9 @@ const collapsedStyle = computed(() => ({
 
   min-width: 140px;
 
-  padding: 0.7rem 1.25rem;
+  padding: 0.8rem 1.6rem;
 
-  border: 1px solid var(--color-border, #e5e5e5);
+  border: 2px solid var(--color-primary);
 
   border-radius: 999px;
 
@@ -196,9 +185,10 @@ const collapsedStyle = computed(() => ({
   box-shadow: var(--shadow-small);
 
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
+    transform 0.35s var(--ease-out),
+    box-shadow 0.35s ease,
+    background 0.35s ease,
+    border-color 0.35s ease;
 }
 
 .expandable-gallery__button:hover {
@@ -206,7 +196,9 @@ const collapsedStyle = computed(() => ({
 
   box-shadow: var(--shadow-medium);
 
-  background: #fafafa;
+  background: var(--color-accent-soft);
+
+  border-color: var(--color-accent);
 }
 
 /* =========================================

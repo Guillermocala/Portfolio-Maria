@@ -2,20 +2,35 @@
 @use '../abstracts/breakpoints' as *;
 @use '../abstracts/mixins' as *;
 
-@use '../abstracts/variables' as *;
-@use '../abstracts/breakpoints' as *;
-@use '../abstracts/mixins' as *;
-
 .section {
   @include section-padding;
 
+  /* Subsecciones dentro de #portfolio: sin padding duplicado arriba */
+  &--nested {
+    padding-top: 0;
+  }
+
   &__header {
-    margin-bottom: $space-12;
-    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-3;
+    max-width: 680px;
+    margin: 0 auto clamp(40px, 5vw, 56px);
+    text-align: center;
+  }
+
+  &__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 13px;
+    font-weight: 700;
+    color: $color-accent;
   }
 
   &__subtitle {
-    margin-top: $space-4;
     color: $color-text-secondary;
+    font-size: clamp(0.95rem, 0.6vw + 0.8rem, 1.05rem);
+    line-height: 1.7;
   }
 }

@@ -2,7 +2,6 @@
 defineProps<{
   image: string;
 }>();
-console.log("componente")
 </script>
 
 <template>
@@ -17,15 +16,15 @@ console.log("componente")
 
   border-radius: 18px;
 
-  background: white;
+  background: var(--color-surface);
 
-  box-shadow: var(--shadow-small);
+  box-shadow: 0 10px 24px rgba(27, 27, 27, 0.07);
 
-  transition: 0.25s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 
   break-inside: avoid;
 
-  margin-bottom: 1.5rem;
+  margin-bottom: 20px;
 
   display: inline-block;
   width: 100%;

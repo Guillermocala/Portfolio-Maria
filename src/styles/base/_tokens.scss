@@ -1,0 +1,16 @@
+@use '../abstracts/variables' as *;
+
+:root {
+  --color-primary: #{$color-primary};
+  --color-accent: #{$color-accent};
+  --color-accent-soft: #{$color-accent-soft};
+  --color-tint: #{$color-tint};
+  --color-border: #{$color-border};
+  --color-surface: #{$color-surface};
+  --color-text-primary: #{$color-text-primary};
+  --color-text-secondary: #{$color-text-secondary};
+  --text-secondary: #{$color-text-secondary};
+  --shadow-small: #{$shadow-small};
+  --shadow-medium: #{$shadow-medium};
+  --ease-out: #{$ease-out};
+}

@@ -5,13 +5,15 @@ withDefaults(
   defineProps<{
     tag?: 'h1' | 'h2' | 'h3' | 'h4'
     subtitle?: string
+    eyebrow?: string
   }>(),
   { tag: 'h2' },
 )
 </script>
 
 <template>
-  <div class="section__header">
+  <div v-reveal="{ effect: 'fade-up', stagger: 100 }" class="section__header">
+    <span v-if="eyebrow" class="section__eyebrow">{{ eyebrow }}</span>
     <component :is="tag">
       <slot />
     </component>

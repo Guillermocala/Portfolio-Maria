@@ -17,32 +17,31 @@ defineProps<{
 
 <style scoped lang="scss">
 .advertising-card {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 20px;
+  break-inside: avoid;
   overflow: hidden;
-
   border-radius: 18px;
-
-  background: white;
-
-  box-shadow: var(--shadow-small);
-
-  transition: 0.25s;
-
+  background: $color-surface;
+  box-shadow: 0 10px 24px rgba(27, 27, 27, 0.07);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   cursor: pointer;
-}
 
-.advertising-card:hover {
-  transform: translateY(-8px);
-
-  box-shadow: var(--shadow-medium);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 34px rgba(27, 27, 27, 0.14);
+    }
+  }
 }
 
 .advertising-card__image {
   display: block;
-
   width: 100%;
-
   height: 100%;
-
   object-fit: cover;
 }
 </style>

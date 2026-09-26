@@ -12,7 +12,7 @@ defineProps<{
 </script>
 
 <template>
-  <section class="timeline">
+  <section v-reveal="{ effect: 'fade-left', stagger: 140 }" class="timeline">
     <article
       v-for="item in items"
       :key="`${item.year}-${item.title}`"
@@ -46,205 +46,134 @@ defineProps<{
   position: relative;
 }
 
+.timeline__dot {
+  position: absolute;
+  z-index: 2;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: $color-accent;
+  border: 3px solid $color-surface;
+  box-shadow: 0 0 0 2px $color-primary;
+}
+
+.timeline__content {
+  background: $color-surface;
+  border: 1px solid rgba(252, 185, 192, 0.3);
+  border-radius: $radius-image;
+  padding: 22px;
+  box-shadow: 0 10px 24px rgba(27, 27, 27, 0.07);
+  transition:
+    transform 0.4s $ease-out,
+    box-shadow 0.4s ease;
+
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: $shadow-medium;
+    }
+  }
+
+  p {
+    font-size: 13px;
+    line-height: 1.65;
+  }
+}
+
 /* ===========================
    Desktop
 =========================== */
 
 @media (min-width: 992px) {
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+  }
 
-.timeline {
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 6px;
+    height: 2px;
+    background: rgba(252, 185, 192, 0.5);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1.56s $ease-out;
+  }
 
-  display: grid;
+  .timeline:has(.is-revealed)::before {
+    transform: scaleX(1);
+  }
 
-  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  .timeline__item {
+    position: relative;
+    padding-top: 24px;
+  }
 
-  gap: 2rem;
-
-  padding-top: 3rem;
-
-}
-
-.timeline::before{
-
-  content:"";
-
-  position:absolute;
-
-  left:0;
-
-  right:0;
-
-  top:26px;
-
-  height:3px;
-
-  background:var(--color-border);
-
-}
-
-.timeline__item{
-
-  position:relative;
-
-  padding-top:2.5rem;
-
-}
-
-.timeline__dot{
-
-  position:absolute;
-
-  top:15px;
-
-  left:50%;
-
-  transform:translateX(-50%);
-
-  width:22px;
-
-  height:22px;
-
-  border-radius:50%;
-
-  background:var(--color-primary);
-
-  border:5px solid white;
-
-  box-shadow:0 0 0 2px var(--color-primary);
-
-  z-index:2;
-
-}
-
-.timeline__content{
-
-  background:white;
-
-  border-radius:18px;
-
-  padding:1.5rem;
-
-  box-shadow:var(--shadow-small);
-
-  transition:.25s;
-
-}
-
-.timeline__content:hover{
-
-  transform:translateY(-8px);
-
-  box-shadow:var(--shadow-medium);
-
-}
-
+  .timeline__dot {
+    top: 0;
+    left: 0;
+  }
 }
 
 /* ===========================
    Mobile
 =========================== */
 
-@media (max-width:991px){
+@media (max-width: 991px) {
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-left: 32px;
+  }
 
-.timeline{
+  .timeline::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 6px;
+    width: 2px;
+    background: rgba(252, 185, 192, 0.5);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 1.56s $ease-out;
+  }
 
-  display:flex;
+  .timeline:has(.is-revealed)::before {
+    transform: scaleY(1);
+  }
 
-  flex-direction:column;
+  .timeline__item {
+    position: relative;
+  }
 
-  gap:2rem;
-
-  position:relative;
-
-  padding-left:2rem;
-
+  .timeline__dot {
+    left: -32px;
+    top: 22px;
+  }
 }
 
-.timeline::before{
-
-  content:"";
-
-  position:absolute;
-
-  top:0;
-
-  bottom:0;
-
-  left:10px;
-
-  width:3px;
-
-  background:var(--color-border);
-
+.timeline__year {
+  display: inline-flex;
+  font-family: $font-heading;
+  font-size: 15px;
+  font-weight: 700;
+  color: $color-accent;
 }
 
-.timeline__item{
-
-  position:relative;
-
+.timeline h3 {
+  margin: 6px 0 2px;
+  font-size: 17px;
 }
 
-.timeline__dot{
-
-  position:absolute;
-
-  left:-2rem;
-
-  top:8px;
-
-  width:20px;
-
-  height:20px;
-
-  border-radius:50%;
-
-  background:var(--color-primary);
-
-  border:4px solid white;
-
-  box-shadow:0 0 0 2px var(--color-primary);
-
-}
-
-.timeline__content{
-
-  background:white;
-
-  border-radius:16px;
-
-  padding:1.25rem;
-
-  box-shadow:var(--shadow-small);
-
-}
-
-}
-
-.timeline__year{
-
-  display:inline-flex;
-
-  margin-bottom:.5rem;
-
-  font-weight:700;
-
-  color:var(--color-primary);
-
-}
-
-.timeline__company{
-
-  margin:.35rem 0 1rem;
-
-  font-weight:600;
-
-  color:var(--color-text-secondary);
-
-}
-
-.timeline h3{
-
-  margin:0;
-
+.timeline .timeline__company {
+  margin: 0 0 10px;
+  font-weight: 600;
+  color: $color-text-secondary;
 }
 </style>

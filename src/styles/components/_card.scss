@@ -4,31 +4,31 @@
 .card {
   background-color: $color-surface;
   border-radius: $radius-card;
+  border: 1px solid $color-border;
   box-shadow: $shadow-small;
   overflow: hidden;
-  @include hover-lift;
+  @include hover-lift(-10px);
 
   &__body {
-    padding: $space-6;
+    padding: 28px;
   }
 
   &__image {
     width: 100%;
     aspect-ratio: 16 / 10;
     object-fit: cover;
-    border-radius: $radius-image $radius-image 0 0;
   }
 
   &__title {
     font-family: $font-heading;
-    font-size: $text-h4-desktop;
+    font-size: 19px;
     margin-bottom: $space-2;
     color: $color-text-primary;
   }
 
   &__text {
-    font-size: $text-body-mobile;
+    font-size: $text-small;
     color: $color-text-secondary;
-    line-height: 1.6;
+    line-height: 1.7;
   }
 }

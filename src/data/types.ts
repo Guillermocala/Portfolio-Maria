@@ -18,6 +18,7 @@ export interface FeaturedProject {
   name: string
   image: string
   summary: string
+  url: string
 }
 
 export interface PortfolioImage {

@@ -3,6 +3,56 @@ import { onMounted, onUnmounted, ref } from "vue";
 import { PDFViewer } from "@embedpdf/vue-pdf-viewer";
 import type { EditorialDocument } from "@/data/types";
 
+/*
+ * Paleta del sitio aplicada al visor (ver src/styles/abstracts/_variables.scss).
+ */
+const viewerTheme = {
+  preference: "light" as const,
+  light: {
+    background: {
+      app: "#fff7f8",
+      surface: "#ffffff",
+      surfaceAlt: "#fff1f3",
+      elevated: "#ffffff",
+      input: "#ffffff",
+    },
+    foreground: {
+      primary: "#1b1b1b",
+      secondary: "#6b6b6b",
+      muted: "#8a8a8a",
+      onAccent: "#ffffff",
+    },
+    border: {
+      default: "rgba(252, 185, 192, 0.45)",
+      subtle: "rgba(252, 185, 192, 0.3)",
+      strong: "#fcb9c0",
+    },
+    accent: {
+      primary: "#a8395a",
+      primaryHover: "#8f2f4c",
+      primaryActive: "#7a2841",
+      primaryLight: "#fff1f3",
+      primaryForeground: "#ffffff",
+    },
+    interactive: {
+      hover: "#fff1f3",
+      active: "#ffe0e4",
+      selected: "#ffe0e4",
+      focus: "#fff1f3",
+      focusRing: "#fcb9c0",
+    },
+    scrollbar: {
+      track: "#fff7f8",
+      thumb: "#fcb9c0",
+      thumbHover: "#a8395a",
+    },
+    tooltip: {
+      background: "#1b1b1b",
+      foreground: "#ffffff",
+    },
+  },
+};
+
 const props = defineProps<{
   documents: EditorialDocument[];
 }>();
@@ -14,35 +64,13 @@ const loadingDocuments = ref<Record<string, boolean>>({});
 const failedDocuments = ref<Record<string, boolean>>({});
 
 /* =========================================================
- * DEBUG
- * ========================================================= */
-
-console.log("[Editorial] Documentos recibidos:", props.documents);
-
-props.documents.forEach((document) => {
-  console.log("[Editorial] Documento:", {
-    id: document.id,
-    title: document.title,
-    pdf: document.pdf,
-    cover: document.cover,
-  });
-});
-
-/* =========================================================
  * SELECCIONAR DOCUMENTO
  * ========================================================= */
 
 const selectDocument = async (document: EditorialDocument) => {
-  console.log("[Editorial] Seleccionando:", document.title);
-  console.log("[Editorial] PDF original:", document.pdf);
-
   selected.value = document;
 
   await preloadDocument(document);
-
-  console.log(" pdfsources: ");
-  console.log(pdfSources.value);
-  console.log("[Editorial] Blob URL:", pdfSources.value[document.id]);
 };
 
 /* =========================================================
@@ -50,14 +78,10 @@ const selectDocument = async (document: EditorialDocument) => {
  * ========================================================= */
 
 const preloadDocument = async (document: EditorialDocument): Promise<void> => {
-  console.log("[Editorial] preloadDocument() ->", document.title);
-
   /*
    * Ya tenemos el PDF cargado.
    */
   if (pdfSources.value[document.id]) {
-    console.log("[Editorial] Ya estaba cargado:", document.title);
-
     return;
   }
 
@@ -65,8 +89,6 @@ const preloadDocument = async (document: EditorialDocument): Promise<void> => {
    * Ya se está descargando.
    */
   if (loadingDocuments.value[document.id]) {
-    console.log("[Editorial] Ya se está cargando:", document.title);
-
     return;
   }
 
@@ -74,17 +96,7 @@ const preloadDocument = async (document: EditorialDocument): Promise<void> => {
   failedDocuments.value[document.id] = false;
 
   try {
-    console.log("[Editorial] Fetch:", document.pdf);
-
     const response = await fetch(document.pdf);
-
-    console.log("[Editorial] Response:", {
-      url: response.url,
-      status: response.status,
-      ok: response.ok,
-      type: response.type,
-      contentType: response.headers.get("content-type"),
-    });
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -92,22 +104,14 @@ const preloadDocument = async (document: EditorialDocument): Promise<void> => {
 
     const blob = await response.blob();
 
-    console.log("[Editorial] Blob:", {
-      size: blob.size,
-      type: blob.type,
-    });
-
     if (!blob.size) {
       throw new Error("El PDF fue descargado pero el Blob está vacío.");
     }
 
     const blobUrl = URL.createObjectURL(blob);
 
-    console.log("[Editorial] Blob URL generado:", blobUrl);
-
     pdfSources.value[document.id] = blobUrl;
 
-    console.log("[Editorial] PDF listo:", document.title);
   } catch (error) {
     console.error("[Editorial] ERROR:", document.title, error);
 
@@ -122,26 +126,11 @@ const preloadDocument = async (document: EditorialDocument): Promise<void> => {
  * ========================================================= */
 
 onMounted(async () => {
-  console.log("[Editorial] Componente montado.");
-
-  console.log("[Editorial] Total documentos:", props.documents.length);
-
   if (!selected.value) {
-    console.warn("[Editorial] No existe documento seleccionado.");
-
     return;
   }
 
-  console.log("[Editorial] Documento inicial:", selected.value.title);
-
   await preloadDocument(selected.value);
-
-  console.log("[Editorial] Estado final inicial:", {
-    selected: selected.value,
-    source: pdfSources.value[selected.value.id],
-    loading: loadingDocuments.value[selected.value.id],
-    failed: failedDocuments.value[selected.value.id],
-  });
 });
 
 /* =========================================================
@@ -149,13 +138,9 @@ onMounted(async () => {
  * ========================================================= */
 
 onUnmounted(() => {
-  console.log("[Editorial] Desmontando componente.");
-
   Object.values(pdfSources.value).forEach((source) => {
     if (source.startsWith("blob:")) {
       URL.revokeObjectURL(source);
-
-      console.log("[Editorial] Blob liberado:", source);
     }
   });
 });
@@ -225,29 +210,28 @@ onUnmounted(() => {
           :config="{
             src: pdfSources[selected.id],
             disabledCategories: ['annotation', 'redaction', 'tools', 'shapes'],
-            theme: {
-              preference: 'light',
-            },
+            theme: viewerTheme,
           }"
           class="editorial__pdf"
         />
       </div>
 
       <div
-        v-else-if="selected && loadingDocuments[selected.id]"
-        class="editorial__empty"
-      >
-        Cargando documento...
-      </div>
-
-      <div
         v-else-if="selected && failedDocuments[selected.id]"
-        class="editorial__empty"
+        class="editorial__state"
       >
-        No se pudo cargar el documento.
+        <strong>No se pudo cargar el documento.</strong>
+        <span>Intenta seleccionarlo de nuevo.</span>
       </div>
 
-      <div v-else class="editorial__empty">No hay documentos disponibles.</div>
+      <div v-else-if="selected" class="editorial__state">
+        <span class="editorial__loader" aria-hidden="true" />
+        <strong>Cargando documento…</strong>
+      </div>
+
+      <div v-else class="editorial__state">
+        <strong>No hay documentos disponibles.</strong>
+      </div>
     </main>
   </section>
 </template>
@@ -286,9 +270,9 @@ onUnmounted(() => {
 
   background: var(--color-surface, #fff);
 
-  border: 1px solid var(--color-border, #e5e5e5);
+  border: 1px solid var(--color-border);
 
-  border-radius: 20px;
+  border-radius: 24px;
 
   box-shadow: var(--shadow-small);
 
@@ -313,6 +297,8 @@ onUnmounted(() => {
   text-transform: uppercase;
 
   letter-spacing: 0.08em;
+
+  color: var(--color-accent);
 }
 
 .editorial__count {
@@ -328,9 +314,13 @@ onUnmounted(() => {
 
   border-radius: 999px;
 
-  background: #f2f2f2;
+  background: var(--color-accent-soft);
+
+  color: var(--color-accent);
 
   font-size: 0.75rem;
+
+  font-weight: 700;
 }
 
 .editorial__instruction {
@@ -391,15 +381,17 @@ onUnmounted(() => {
 .editorial-card:hover {
   transform: translateY(-2px);
 
-  background: #fafafa;
+  background: var(--color-tint);
 
-  border-color: var(--color-border, #e5e5e5);
+  border-color: var(--color-border);
 }
 
 .editorial-card--active {
-  background: #f7f7f7;
+  background: var(--color-accent-soft);
 
-  border-color: var(--color-accent, #222);
+  border-color: var(--color-primary);
+
+  box-shadow: inset 3px 0 0 var(--color-accent);
 }
 
 .editorial-card__cover {
@@ -409,9 +401,9 @@ onUnmounted(() => {
 
   object-fit: scale-down;
 
-  border-radius: 8px;
+  border-radius: 10px;
 
-  background: #f3f3f3;
+  background: var(--color-accent-soft);
 
   transition: transform 0.3s ease;
 }
@@ -432,7 +424,9 @@ onUnmounted(() => {
 .editorial-card h3 {
   margin: 0 0 0.35rem;
 
-  font-size: 0.9rem;
+  font-family: $font-heading;
+
+  font-size: 1rem;
 
   line-height: 1.25;
 
@@ -492,10 +486,10 @@ onUnmounted(() => {
 
   overflow: hidden;
 
-  border: 1px solid var(--color-border, #e5e5e5);
-  border-radius: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
 
-  background: #f4f4f4;
+  background: var(--color-tint);
 
   box-shadow: var(--shadow-small);
 }
@@ -537,7 +531,7 @@ onUnmounted(() => {
 
   overflow: hidden;
 
-  background: #e9e9e9;
+  background: var(--color-accent-soft);
 }
 
 .editorial__pdf-viewer {
@@ -586,7 +580,11 @@ onUnmounted(() => {
 }
 
 .editorial__state strong {
-  color: var(--color-text-primary, #222);
+  font-family: $font-heading;
+
+  font-size: 1.1rem;
+
+  color: var(--color-text-primary);
 }
 
 .editorial__loader {
@@ -596,9 +594,9 @@ onUnmounted(() => {
 
   margin-bottom: 0.75rem;
 
-  border: 3px solid #ddd;
+  border: 3px solid #ffe0e4;
 
-  border-top-color: var(--color-accent, #222);
+  border-top-color: var(--color-accent);
 
   border-radius: 50%;
 
@@ -639,20 +637,15 @@ onUnmounted(() => {
   }
 
   .editorial__viewer {
-    height: 700px;
-  }
-}
-
-@media (max-width: 900px) {
-  .editorial__viewer {
-    height: 650px;
+    height: 75vh;
   }
 }
 
 @media (max-width: 600px) {
   .editorial__viewer {
-    height: 600px;
-    border-radius: 14px;
+    height: 70vh;
+    min-height: 460px;
+    border-radius: 18px;
   }
 }
 </style>

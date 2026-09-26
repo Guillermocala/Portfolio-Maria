@@ -3,9 +3,9 @@
 @use '../abstracts/mixins' as *;
 
 body {
-  /* font-family: $font-body; */
+  font-family: $font-body;
   font-size: $text-body-mobile;
-  line-height: 1.6;
+  line-height: 1.7;
   color: $color-text-primary;
   background-color: $color-bg;
   -webkit-font-smoothing: antialiased;
@@ -28,27 +28,17 @@ h6 {
 }
 
 h1 {
-  font-size: $text-h1-mobile;
-
-  @include breakpoint(lg) {
-    font-size: $text-h1-desktop;
-  }
+  font-size: $text-h1;
+  font-weight: 700;
+  line-height: 1.05;
 }
 
 h2 {
-  font-size: $text-h2-mobile;
-
-  @include breakpoint(lg) {
-    font-size: $text-h2-desktop;
-  }
+  font-size: $text-h2;
 }
 
 h3 {
-  font-size: $text-h3-mobile;
-
-  @include breakpoint(lg) {
-    font-size: $text-h3-desktop;
-  }
+  font-size: $text-h3;
 }
 
 h4 {

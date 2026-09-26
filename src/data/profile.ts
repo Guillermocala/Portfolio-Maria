@@ -57,6 +57,7 @@ export const featuredProjects: FeaturedProject[] = [
     id: 'smartcultivo',
     name: 'SmartCultivo',
     image: smartcultivoLogo,
+    url: 'https://smartcultivo.com/',
     summary:
       'Desarrollo de contenido para redes sociales, branding corporativo y piezas publicitarias para el sector agrícola.',
   },
@@ -64,6 +65,7 @@ export const featuredProjects: FeaturedProject[] = [
     id: 'thissa',
     name: 'Thissa Store',
     image: thissaLogo,
+    url: 'https://thissa.digital/',
     summary:
       'Diseño gráfico y marketing digital enfocado en contenido comercial, menús digitales, publicidad y comunicación visual.',
   },
@@ -71,6 +73,7 @@ export const featuredProjects: FeaturedProject[] = [
     id: 'osiris',
     name: 'Bar Osiris',
     image: osirisLogo,
+    url: 'https://thissa.store/osiris',
     summary:
       'Diseño de contenido para redes sociales y material promocional para fortalecer la identidad visual del establecimiento.',
   },

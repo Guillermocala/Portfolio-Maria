@@ -63,15 +63,17 @@ const emit = defineEmits<{
 
   overflow: hidden;
 
-  border-radius: 28px;
+  border-radius: 22px;
 
-  background: white;
+  border: 1px solid var(--color-border);
 
-  box-shadow: var(--shadow-small);
+  background: var(--color-surface);
+
+  box-shadow: 0 10px 24px rgba(27, 27, 27, 0.06);
 
   transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+    transform 0.35s var(--ease-out),
+    box-shadow 0.35s ease;
 
   cursor: pointer;
 }
@@ -119,7 +121,7 @@ const emit = defineEmits<{
 
   text-align: center;
 
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(27, 27, 27, 0.5);
 
   opacity: 0;
 
@@ -179,7 +181,7 @@ const emit = defineEmits<{
 
   border-radius: 999px;
 
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(27, 27, 27, 0.35);
 
   color: white;
 
@@ -209,7 +211,8 @@ const emit = defineEmits<{
 
   display: flex;
 
-  align-items: center;
+  /* el contenido ocupa toda la altura de la fila del grid */
+  align-items: stretch;
   justify-content: center;
 
   cursor: pointer;
@@ -236,13 +239,13 @@ const emit = defineEmits<{
 
   min-height: 260px;
 
-  background: #f7f7f7;
+  background: var(--color-accent-soft);
 
   transition: background 0.25s ease;
 }
 
 .qr-card--view-more:hover .qr-card__view-more {
-  background: #eeeeee;
+  background: #ffe0e4;
 }
 
 .qr-card__view-more-icon {
@@ -254,7 +257,7 @@ const emit = defineEmits<{
 
   place-items: center;
 
-  border: 1px solid var(--color-border, #ddd);
+  border: 2px solid var(--color-primary);
 
   border-radius: 50%;
 
@@ -272,7 +275,9 @@ const emit = defineEmits<{
 .qr-card--view-more:hover .qr-card__view-more-icon {
   transform: scale(1.08);
 
-  background: #222;
+  background: var(--color-text-primary);
+
+  border-color: var(--color-text-primary);
 
   color: white;
 }
@@ -282,6 +287,6 @@ const emit = defineEmits<{
 
   font-weight: 600;
 
-  color: var(--color-text-primary, #222);
+  color: var(--color-accent);
 }
 </style>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { ChevronLeft, ChevronRight } from "@lucide/vue";
 
 const props = defineProps<{
   image: string;
@@ -196,7 +197,7 @@ onBeforeUnmount(() => {
           aria-label="Imagen anterior"
           @click="previousImage"
         >
-          ‹
+          <ChevronLeft :size="26" :stroke-width="2.25" aria-hidden="true" />
         </button>
 
         <!-- IMAGE -->
@@ -225,7 +226,7 @@ onBeforeUnmount(() => {
           aria-label="Imagen siguiente"
           @click="nextImage"
         >
-          ›
+          <ChevronRight :size="26" :stroke-width="2.25" aria-hidden="true" />
         </button>
 
         <!-- FOOTER -->
@@ -251,17 +252,17 @@ onBeforeUnmount(() => {
   position: relative;
   flex: 0 0 250px;
 
-  border-radius: 28px;
+  border-radius: 26px;
 
   overflow: hidden;
 
-  background: white;
+  background: var(--color-surface);
 
-  box-shadow: var(--shadow-small);
+  box-shadow: 0 14px 30px rgba(27, 27, 27, 0.1);
 
   transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+    transform 0.35s var(--ease-out),
+    box-shadow 0.35s ease;
 
   cursor: zoom-in;
 }
@@ -280,7 +281,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
 
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(27, 27, 27, 0.45);
 
   opacity: 0;
 
@@ -329,6 +330,14 @@ onBeforeUnmount(() => {
   width: 100%;
 
   height: fit-content;
+
+  padding: 14px;
+
+  border-radius: 20px;
+
+  border: 1px solid rgba(252, 185, 192, 0.3);
+
+  box-shadow: 0 10px 24px rgba(27, 27, 27, 0.07);
 }
 
 .menu-card--desktop .menu-card__image {
@@ -337,6 +346,8 @@ onBeforeUnmount(() => {
   height: auto;
 
   object-fit: contain;
+
+  border-radius: 8px;
 }
 
 /* =========================================
@@ -520,7 +531,7 @@ onBeforeUnmount(() => {
 
   color: white;
 
-  font-size: 2.5rem;
+  padding: 0;
 
   line-height: 1;
 

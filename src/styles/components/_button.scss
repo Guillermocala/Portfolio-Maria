@@ -7,27 +7,28 @@
   align-items: center;
   justify-content: center;
   gap: $space-2;
-  padding: $space-3 $space-6;
-  border-radius: $radius-button;
-  /* font-family: $font-body; */
-  font-size: $text-body-mobile;
-  font-weight: 500;
-  transition: transform $transition-base, background-color $transition-base, color $transition-base, border-color $transition-base;
+  padding: $space-4 $space-8;
+  border-radius: $radius-pill;
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 600;
+  transition:
+    transform 350ms $ease-out,
+    box-shadow 350ms ease,
+    background-color 350ms ease,
+    color 350ms ease,
+    border-color 350ms ease;
   @include focus-ring;
-
-  @media (hover: hover) {
-    &:hover {
-      transform: translateY($hover-lift);
-    }
-  }
 
   &--primary {
     background-color: $color-text-primary;
     color: $color-surface;
+    box-shadow: 0 10px 24px rgba(27, 27, 27, 0.25);
 
     @media (hover: hover) {
       &:hover {
-        background-color: lighten($color-text-primary, 10%);
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 16px 32px rgba(27, 27, 27, 0.3);
       }
     }
   }
@@ -35,11 +36,13 @@
   &--secondary {
     background-color: transparent;
     color: $color-text-primary;
-    border: 1px solid $color-border;
+    border: 2px solid $color-primary;
 
     @media (hover: hover) {
       &:hover {
-        border-color: $color-text-primary;
+        transform: translateY(-4px);
+        background-color: $color-accent-soft;
+        border-color: $color-accent;
       }
     }
   }
@@ -51,13 +54,13 @@
 
     @media (hover: hover) {
       &:hover {
-        color: $color-text-primary;
+        color: $color-accent;
       }
     }
   }
 
   &--sm {
     padding: $space-2 $space-4;
-    font-size: $text-small;
+    font-size: 13px;
   }
 }
