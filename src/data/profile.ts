@@ -8,7 +8,7 @@ export const profile: Profile = {
   specialty: 'Diseñadora Gráfica · Community Manager · Marketing Digital',
   description:
     'Diseño piezas visuales que fortalecen la identidad de marca y mejoran la comunicación entre las empresas y sus clientes. Mi trabajo combina creatividad, estrategia y atención al detalle para desarrollar soluciones gráficas funcionales, atractivas y alineadas con cada proyecto.',
-  photo: '/src/assets/hero.jpeg',
+  photo: '/src/assets/hero.webp',
   about:
     'Soy diseñadora gráfica con experiencia en branding, diseño editorial, publicidad y contenido para redes sociales. Me apasiona crear piezas visuales que comuniquen con claridad, transmitan la personalidad de cada marca y generen una conexión auténtica con su audiencia. Cada proyecto representa una oportunidad para combinar creatividad, organización y pensamiento estratégico, cuidando cada detalle desde el concepto hasta la entrega final.',
   stats: [

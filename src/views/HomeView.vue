@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useResizeObserver, useScroll } from "@vueuse/core";
 import { ChevronLeft, ChevronRight } from "@lucide/vue";
 import { useCollapsible } from "@/composables/useCollapsible";
@@ -11,12 +11,11 @@ import BaseContainer from "@/components/ui/BaseContainer.vue";
 import BaseSection from "@/components/ui/BaseSection.vue";
 import BaseTitle from "@/components/ui/BaseTitle.vue";
 import BaseQrCard from "@/components/ui/BaseQrCard.vue";
-import heroPhoto from "@/assets/hero.jpeg";
+import heroPhoto from "@/assets/hero.webp";
 import BaseCarousel from "@/components/ui/BaseCarousel.vue";
 import BaseTimeline from "@/components/base/BaseTimeline.vue";
 import PhotoCard from "@/components/base/PhotoCard.vue";
 import AdvertisingCard from "@/components/base/AdvertisingCard.vue";
-import BaseEditorialViewer from "@/components/base/BaseEditorialViewer.vue";
 import BaseExpandableGallery from "@/components/base/BaseExpandableGallery.vue";
 import MenuCard from "@/components/base/MenuCard.vue";
 import AppNavbar from "@/components/layout/AppNavbar.vue";
@@ -27,22 +26,21 @@ import { tools } from "@/data/tools";
 /* import { onMounted, onUnmounted, watch } from "vue"; */
 /* import type { EditorialDocument } from "@/data/types"; */
 
-import rinconConocimientoPdf from "@/assets/portfolio/editorial/El_rincon_del_conocimiento.pdf";
-import coverRinconConocimiento from "@/assets/portfolio/editorial/cover_1.png";
-/* import thissaPdf from "@/assets/portfolio/editorial/Presentacion_Thissa_Store.pdf";
-import coverThissaPdf from "@/assets/portfolio/editorial/cover_2.png"; */
-import catalogPdf from "@/assets/portfolio/editorial/Catalogo_don_josue.pdf";
-import coverCatalogPdf from "@/assets/portfolio/editorial/cover_3.png";
+/*
+ * Editorial desactivado temporalmente mientras se evalúa el rendimiento:
+ * los PDF (23 MB + 4.4 MB) y el visor embedpdf (wasm de 4.6 MB) se sacaron
+ * del bundle. Los PDF están en /originales/portfolio/editorial.
+ */
 
-import qr1 from "@/assets/portfolio/qrs/qr1.svg";
-import qr2 from "@/assets/portfolio/qrs/qr2.svg";
-import qr3 from "@/assets/portfolio/qrs/qr3.svg";
-import qr4 from "@/assets/portfolio/qrs/qr4.svg";
-import qr5 from "@/assets/portfolio/qrs/qr5.svg";
-import qr6 from "@/assets/portfolio/qrs/qr6.svg";
-import qr7 from "@/assets/portfolio/qrs/qr7.svg";
-import qr8 from "@/assets/portfolio/qrs/qr8.svg";
-import qr9 from "@/assets/portfolio/qrs/qr9.png";
+import qr1 from "@/assets/portfolio/qrs/qr1.webp";
+import qr2 from "@/assets/portfolio/qrs/qr2.webp";
+import qr3 from "@/assets/portfolio/qrs/qr3.webp";
+import qr4 from "@/assets/portfolio/qrs/qr4.webp";
+import qr5 from "@/assets/portfolio/qrs/qr5.webp";
+import qr6 from "@/assets/portfolio/qrs/qr6.webp";
+import qr7 from "@/assets/portfolio/qrs/qr7.webp";
+import qr8 from "@/assets/portfolio/qrs/qr8.webp";
+import qr9 from "@/assets/portfolio/qrs/qr9.webp";
 
 const { scrollToSection } = useScrollTo();
 
@@ -65,15 +63,6 @@ type QrImage = {
   href: string;
 };
 
-type EditorialDocument = {
-  id: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  cover: string;
-  pdf: string;
-  viewer: "flipbook" | "pdf";
-};
 
 const portfolioMedia = import.meta.glob("../assets/portfolio/**/*", {
   eager: true,
@@ -205,40 +194,6 @@ const portfolioQrs: QrImage[] = [
   },
 ];
 
-const editorialDocuments: EditorialDocument[] = [
-  {
-    id: "book",
-    title: "El Rincón del Conocimiento",
-    subtitle: "Libro educativo",
-    description:
-      "Proyecto editorial diagramado en formato horizontal para una experiencia de lectura inmersiva.",
-    cover: coverRinconConocimiento,
-    pdf: rinconConocimientoPdf,
-    viewer: "flipbook",
-  },
-/* 
-  {
-    id: "thissa",
-    title: "Presentación Thissa Store",
-    subtitle: "Presentación corporativa",
-    description:
-      "Presentación desarrollada para comunicar la identidad y propuesta de valor de la marca.",
-    cover: coverThissaPdf,
-    pdf: thissaPdf,
-    viewer: "pdf",
-  }, */
-
-  {
-    id: "don-josue",
-    title: "Catálogo de Productos Don Josué",
-    subtitle: "Catálogo comercial",
-    description:
-      "Catálogo diseñado para exhibir productos mediante una estructura clara y atractiva.",
-    cover: coverCatalogPdf,
-    pdf: catalogPdf,
-    viewer: "flipbook",
-  },
-];
 
 const currentYear = computed(() => new Date().getFullYear());
 const heroNameFirst = computed(() => profile.name.split(" ")[0]);
@@ -286,6 +241,12 @@ const {
 
     return `${bottom + QR_GRID_PADDING}px`;
   },
+});
+
+/* Los QR ocultos no se descargan hasta la primera vez que se expande */
+const qrEverExpanded = ref(false);
+watch(qrExpanded, (expanded) => {
+  if (expanded) qrEverExpanded.value = true;
 });
 
 const syncQrHeight = () => {
@@ -353,10 +314,18 @@ onMounted(measureMenus);
                 >
               </div>
             </div>
-            <div v-reveal="{ effect: 'zoom', delay: 250 }" class="hero__media">
+            <div v-reveal="'zoom'" class="hero__media">
               <div class="hero__photo-backdrop" aria-hidden="true" />
               <div class="hero__photo">
-                <img :src="heroPhoto" :alt="profile.name" class="hero__image" />
+                <img
+                  :src="heroPhoto"
+                  :alt="profile.name"
+                  class="hero__image"
+                  width="1000"
+                  height="1049"
+                  loading="eager"
+                  fetchpriority="high"
+                />
               </div>
               <div class="hero__bubble" aria-hidden="true" />
             </div>
@@ -502,6 +471,8 @@ onMounted(measureMenus);
                 v-reveal="'fade-left'"
                 :src="brandingImages[0]"
                 alt="Pieza de branding"
+                loading="lazy"
+                decoding="async"
                 class="branding-image branding-image--vertical"
               />
 
@@ -509,6 +480,8 @@ onMounted(measureMenus);
                 v-reveal="{ effect: 'fade-right', delay: 120 }"
                 :src="brandingImages[1]"
                 alt="Pieza de branding"
+                loading="lazy"
+                decoding="async"
                 class="branding-image branding-image--horizontal"
               />
 
@@ -516,6 +489,8 @@ onMounted(measureMenus);
                 v-reveal="{ effect: 'fade-right', delay: 240 }"
                 :src="brandingImages[2]"
                 alt="Pieza de branding"
+                loading="lazy"
+                decoding="async"
                 class="branding-image branding-image--vertical"
               />
             </div>
@@ -549,6 +524,7 @@ onMounted(measureMenus);
                   :aria-hidden="!qrExpanded && index >= visibleQrCount"
                 >
                   <BaseQrCard
+                    v-if="index < visibleQrCount || qrEverExpanded"
                     :image="qr.image"
                     :title="qr.title"
                     :description="qr.description"
@@ -708,19 +684,10 @@ onMounted(measureMenus);
             </BaseExpandableGallery>
           </BaseSection>
 
-          <BaseSection id="editorial" nested>
-            <BaseTitle
-              tag="h2"
-              eyebrow="Portafolio"
-              subtitle="Proyectos editoriales desarrollados para distintos formatos de comunicación visual."
-            >
-              Editorial
-            </BaseTitle>
-            <BaseEditorialViewer
-              v-reveal="{ effect: 'fade-up', stagger: 150 }"
-              :documents="editorialDocuments"
-            />
-          </BaseSection>
+          <!--
+            Editorial desactivado temporalmente (ver nota en el script).
+            Para reactivarlo, restaurar BaseEditorialViewer y los PDF.
+          -->
         </BaseContainer>
       </BaseSection>
 
@@ -743,7 +710,13 @@ onMounted(measureMenus);
           <BaseTitle tag="h2" eyebrow="Software">Herramientas</BaseTitle>
           <div v-reveal="{ effect: 'pop', stagger: 70 }" class="tool-list">
             <span v-for="tool in tools" :key="tool.name" class="tool-pill">
-              <img :src="tool.src" :alt="tool.name" class="tool-pill__logo" />
+              <img
+                :src="tool.src"
+                :alt="tool.name"
+                class="tool-pill__logo"
+                loading="lazy"
+                decoding="async"
+              />
             </span>
           </div>
         </BaseContainer>
@@ -817,6 +790,13 @@ onMounted(measureMenus);
   z-index: 0;
   border-radius: 50%;
   pointer-events: none;
+  will-change: transform;
+
+  /* Móvil: blobs estáticos, la animación continua cuesta pintado */
+  @media (max-width: 767px) {
+    animation: none !important;
+    will-change: auto;
+  }
 
   &--a {
     top: -60px;
@@ -856,6 +836,11 @@ onMounted(measureMenus);
   display: flex;
   flex-direction: column;
   gap: 22px;
+
+  /* En móvil la foto va primero: el texto entra después de ella */
+  @media (max-width: 1023px) {
+    --reveal-delay-offset: 350ms;
+  }
 }
 
 .hero__title {
@@ -895,6 +880,22 @@ onMounted(measureMenus);
   width: 100%;
   max-width: 420px;
   margin-inline: auto;
+
+  /* Escritorio: la foto entra después del texto */
+  @include breakpoint(lg) {
+    --reveal-delay-offset: 325ms;
+  }
+
+  /* Móvil/tablet: la foto va primero y completa en la primera pantalla */
+  @media (max-width: 1023px) {
+    order: -1;
+    max-width: 300px;
+    margin-top: 12px;
+  }
+
+  @media (max-width: 480px) {
+    max-width: 240px;
+  }
 }
 
 $hero-shape: 48% 52% 55% 45% / 45% 55% 45% 55%;

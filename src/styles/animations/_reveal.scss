@@ -44,7 +44,8 @@
   opacity: 0;
 
   &.is-revealed {
-    animation: reveal-in var(--reveal-in-duration) $ease-out var(--reveal-delay, 0ms) both;
+    animation: reveal-in var(--reveal-in-duration) $ease-out
+      calc(var(--reveal-delay, 0ms) + var(--reveal-delay-offset, 0ms)) both;
   }
 
   &.is-concealed {
@@ -81,6 +82,29 @@
     translate: var(--reveal-x, 0) var(--reveal-y, 0);
     scale: var(--reveal-scale, 1);
     filter: blur(var(--reveal-blur, 0));
+  }
+}
+
+/*
+ * Táctil: versión sin `filter` (el blur es costoso de pintar en móviles).
+ */
+@keyframes reveal-in-lite {
+  from {
+    opacity: 0;
+    translate: var(--reveal-x, 0) var(--reveal-y, 0);
+    scale: var(--reveal-scale, 1);
+  }
+
+  to {
+    opacity: 1;
+    translate: none;
+    scale: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .reveal-item.is-revealed {
+    animation-name: reveal-in-lite;
   }
 }
 

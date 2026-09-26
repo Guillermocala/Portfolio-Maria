@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { watch, ref, nextTick, onMounted, onUnmounted } from "vue";
+import { useIntersectionObserver } from "@vueuse/core";
 import emblaCarouselVue from "embla-carousel-vue";
 import { ChevronLeft, ChevronRight } from "@lucide/vue";
 
@@ -33,6 +34,9 @@ const [emblaRef, emblaApi] = emblaCarouselVue(options);
 const timer = ref<ReturnType<typeof setInterval> | null>(null);
 const selectedIndex = ref(0);
 const isPaused = ref(false);
+/* El autoplay sólo corre mientras el carrusel está en pantalla */
+const isOnScreen = ref(false);
+const rootRef = ref<HTMLElement | null>(null);
 void emblaRef;
 
 const scroll = () => {
@@ -68,7 +72,7 @@ const stopAutoplay = () => {
 const startAutoplay = () => {
   stopAutoplay();
 
-  if (!emblaApi.value || isPaused.value) return;
+  if (!emblaApi.value || isPaused.value || !isOnScreen.value) return;
 
   timer.value = window.setInterval(scroll, props.autoplayDelay);
 };
@@ -106,9 +110,8 @@ const handleResize = () => {
   emblaApi.value?.reInit();
 };
 
+/* embla ya reacciona al resize de la ventana (watchResize) */
 onMounted(async () => {
-  window.addEventListener("resize", handleResize);
-
   await nextTick();
 
   requestAnimationFrame(() => {
@@ -117,8 +120,14 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener("resize", handleResize);
   stopAutoplay();
+});
+
+useIntersectionObserver(rootRef, ([entry]) => {
+  isOnScreen.value = !!entry?.isIntersecting;
+
+  if (isOnScreen.value && !isPaused.value) startAutoplay();
+  else stopAutoplay();
 });
 
 watch(
@@ -153,6 +162,7 @@ watch(
 
 <template>
   <div
+    ref="rootRef"
     class="carousel"
     :class="{ 'carousel--controls': controls }"
     @mouseenter="controls && pause()"
@@ -169,6 +179,7 @@ watch(
                 :src="image"
                 :alt="label || image"
                 class="embla__img"
+                decoding="async"
                 @load="handleResize"
               />
             </div>

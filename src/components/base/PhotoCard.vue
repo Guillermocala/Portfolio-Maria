@@ -6,7 +6,7 @@ defineProps<{
 
 <template>
   <figure class="photo-card">
-    <img :src="image" :alt="image" class="photo-card__image" loading="lazy" />
+    <img :src="image" :alt="image" class="photo-card__image" loading="lazy" decoding="async" />
   </figure>
 </template>
 

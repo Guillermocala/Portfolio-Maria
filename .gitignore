@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Originales de imágenes y PDFs (ver scripts/optimize-images.mjs)
+originales/

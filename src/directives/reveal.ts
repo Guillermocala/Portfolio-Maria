@@ -63,28 +63,53 @@ const setRevealed = (el: HTMLElement, revealed: boolean) => {
   })
 }
 
-let observer: IntersectionObserver | null = null
+/*
+ * Dos observers con umbrales distintos (histéresis): se revela al entrar un
+ * 10% en pantalla y sólo se oculta cuando sale por completo. Así un elemento
+ * justo en el borde no parpadea con cada micro-scroll.
+ */
+let enterObserver: IntersectionObserver | null = null
+let exitObserver: IntersectionObserver | null = null
 
-const getObserver = () => {
-  observer ??= new IntersectionObserver(
+/*
+ * En pantallas táctiles sólo se anima la entrada: evita re-animar todo al
+ * hacer scroll en ambos sentidos, que es lo que más pesa en móviles.
+ */
+const isTouch = () => window.matchMedia('(pointer: coarse)').matches
+
+const stopObserving = (el: HTMLElement) => {
+  enterObserver?.unobserve(el)
+  exitObserver?.unobserve(el)
+}
+
+const observe = (el: HTMLElement) => {
+  enterObserver ??= new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
         const el = entry.target as HTMLElement
         const state = states.get(el)
         if (!state) return
 
-        if (entry.isIntersecting) {
-          setRevealed(el, true)
-          if (state.options.once) observer?.unobserve(el)
-        } else if (state.revealed) {
-          setRevealed(el, false)
-        }
+        setRevealed(el, true)
+        if (state.options.once || isTouch()) stopObserving(el)
       })
     },
     { rootMargin: '0px 0px -10% 0px', threshold: 0 },
   )
 
-  return observer
+  exitObserver ??= new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) return
+        setRevealed(entry.target as HTMLElement, false)
+      })
+    },
+    { threshold: 0 },
+  )
+
+  enterObserver.observe(el)
+  exitObserver.observe(el)
 }
 
 export const reveal: Directive<HTMLElement, RevealValue> = {
@@ -95,7 +120,7 @@ export const reveal: Directive<HTMLElement, RevealValue> = {
     states.set(el, { options, revealed: false })
     prepareTargets(el, options)
 
-    getObserver().observe(el)
+    observe(el)
   },
 
   updated(el) {
@@ -110,7 +135,7 @@ export const reveal: Directive<HTMLElement, RevealValue> = {
   },
 
   unmounted(el) {
-    observer?.unobserve(el)
+    stopObserving(el)
     states.delete(el)
   },
 }

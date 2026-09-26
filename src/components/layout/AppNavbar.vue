@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { onClickOutside, onKeyStroke, useWindowScroll, useWindowSize } from "@vueuse/core";
+import {
+  onClickOutside,
+  onKeyStroke,
+  useResizeObserver,
+  useWindowScroll,
+  useWindowSize,
+} from "@vueuse/core";
 import { Menu, X } from "@lucide/vue";
 import BaseContainer from "@/components/ui/BaseContainer.vue";
 import { navLinks, sectionIds } from "@/data/navigation";
@@ -19,8 +25,17 @@ const isMenuOpen = ref(false);
 
 const isScrolled = computed(() => y.value > SCROLL_THRESHOLD);
 
+/*
+ * La altura del documento se mide sólo cuando cambia de tamaño, no en cada
+ * evento de scroll (leer scrollHeight ahí fuerza un layout por frame).
+ */
+const documentHeight = ref(document.documentElement.scrollHeight);
+useResizeObserver(document.body, () => {
+  documentHeight.value = document.documentElement.scrollHeight;
+});
+
 const progress = computed(() => {
-  const scrollable = document.documentElement.scrollHeight - viewportHeight.value;
+  const scrollable = documentHeight.value - viewportHeight.value;
   return scrollable > 0 ? Math.min(y.value / scrollable, 1) : 0;
 });
 
@@ -119,6 +134,17 @@ watch(isMenuOpen, (open) => {
 
   &--open {
     background: rgba(255, 255, 255, 0.96);
+  }
+
+  /* Móvil: sin backdrop-filter (muy costoso al hacer scroll en Android) */
+  @media (max-width: 1023px) {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+
+    &--scrolled {
+      background: rgba(255, 255, 255, 0.94);
+    }
   }
 }
 
@@ -223,9 +249,7 @@ watch(isMenuOpen, (open) => {
   gap: 4px;
   padding: $space-6 5%;
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.98);
   border-top: 1px solid rgba(252, 185, 192, 0.4);
 
   @include breakpoint(lg) {
@@ -285,5 +309,6 @@ watch(isMenuOpen, (open) => {
   background: linear-gradient(90deg, $color-primary, $color-accent);
   transform-origin: left;
   pointer-events: none;
+  will-change: transform;
 }
 </style>

@@ -11,7 +11,13 @@ defineProps<{
 
 <template>
   <article class="advertising-card">
-    <img :src="image" :alt="title" class="advertising-card__image" />
+    <img
+      :src="image"
+      :alt="title ?? 'Pieza publicitaria'"
+      class="advertising-card__image"
+      loading="lazy"
+      decoding="async"
+    />
   </article>
 </template>
 

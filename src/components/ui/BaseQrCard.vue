@@ -33,7 +33,7 @@ const emit = defineEmits<{
     </template>
 
     <template v-else>
-      <img :src="image" :alt="title" class="qr-card__image" loading="lazy" />
+      <img :src="image" :alt="title" class="qr-card__image" loading="lazy" decoding="async" />
 
       <div class="qr-card__overlay">
         <h3>{{ title }}</h3>
@@ -94,6 +94,9 @@ const emit = defineEmits<{
   width: 100%;
 
   height: 100%;
+
+  /* los QR son cuadrados: reserva el espacio antes de que carguen */
+  aspect-ratio: 1 / 1;
 
   object-fit: cover;
 }
